@@ -1,0 +1,70 @@
+﻿## ===============================
+## .NET / ASP.NET Core / Blazor
+## ===============================
+
+# Build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.DotSettings.user
+
+# Visual Studio Code
+.vscode/
+
+# ASP.NET Core / Blazor publish output
+publish/
+wwwroot/dist/
+
+# ASP.NET scaffolding
+ScaffoldingReadMe.txt
+
+# Logs
+*.log
+
+# Secret files / configs
+appsettings.Development.json.user
+secrets.json
+
+# .NET Core tools
+.toolstargets
+.project.nuget.cache
+
+# NuGet
+*.nupkg
+*.snupkg
+**/project.assets.json
+**/packages.lock.json
+
+# NuGet fallback folder
+**/packages/
+
+# Entity Framework Core
+Migrations/*Snapshot.cs
+Migrations/*Designer.cs
+
+# IIS Express
+.iisexpress/
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker (if not needed)
+docker-compose.override.yml
+
+# JetBrains Rider build cache
+cmake-build-*/
