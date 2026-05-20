@@ -1,7 +1,39 @@
 ﻿@page "/"
+@inject IJSRuntime JS;
+@inject HttpClient Http;
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Diagrams</h1>
+@if (Diagrams == null)
+{
+    <p>Loading...</p>
+}
 
-Welcome to your new app.
+
+@foreach (var diagram in Diagrams)
+{
+    <button onclick="() => loadDiagram(diagram.File)">
+        @diagram.Name
+    </button>
+}
+@code{
+    private List<DiagramItem> Diagrams = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Diagrams = await Http.GetFromJsonAsync<List<DiagramItem>>("Diagrams/Diagrams.json");
+    }
+
+    public class DiagramItem
+    {
+        public string Name { get; set; }
+        public string File { get; set; }
+    }
+
+    private async Task LoadDiagrams(string file)
+    {
+        await JS.InvokeVoidAsync(
+            "LoadDiagram.loadDiagram", file);
+    }
+}

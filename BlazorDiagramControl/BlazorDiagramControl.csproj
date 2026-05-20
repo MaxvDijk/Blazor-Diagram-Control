@@ -7,4 +7,9 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="Components\Javascript\Factories\ShapeTypeFactory.js" />
+    <Compile Include="Components\Javascript\Models\Shape.js" />
+  </ItemGroup>
+
 </Project>
