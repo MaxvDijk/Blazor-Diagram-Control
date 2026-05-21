@@ -5,8 +5,8 @@ import { createLine } from "../Factories/LineFactory.js"
 export function buildDiagram(components) {
 
     const diagram = {
-        Shapes: new map(),
-        Lines: new map()
+        Shapes: new Map(),
+        Lines: new Map()
     }
 
     for (const c in components) {

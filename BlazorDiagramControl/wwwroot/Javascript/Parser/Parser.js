@@ -1,4 +1,4 @@
-﻿export function ParseXML(xmlString) {
+﻿export function parseXML(xmlString) {
     const xmlDocument = new DOMParser().parseFromString(xmlString, "text/xml");
 
     const components = xmlDocument.querySelectorAll("Component");
@@ -8,6 +8,7 @@
     for (const component of components) {
         rawComponents.push(parseComponent(component))
     }
+    return rawComponents;
 }
 
 function parseComponent(component) {
@@ -25,7 +26,7 @@ function parseComponent(component) {
         StartItemID: component.querySelector("StartItemID")?.textContent,
         EndItemID: component.querySelector("EndItemID")?.textContent,
 
-        description: component.getAttribute("csDescription") ?
+        description: component.getAttribute("csDescription")
     };
 
 }

@@ -1,4 +1,4 @@
-﻿export class Lines {
+﻿export class Line {
     constructor(
         id,
         bindingType,

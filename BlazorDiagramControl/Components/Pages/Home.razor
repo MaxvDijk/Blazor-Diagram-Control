@@ -1,39 +1,85 @@
 ﻿@page "/"
-@inject IJSRuntime JS;
-@inject HttpClient Http;
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject HttpClient Http
 
 <PageTitle>Home</PageTitle>
 
 <h1>Diagrams</h1>
-@if (Diagrams == null)
+
+@if (Diagrams.Count == 0)
 {
     <p>Loading...</p>
 }
 
-
 @foreach (var diagram in Diagrams)
 {
-    <button onclick="() => loadDiagram(diagram.File)">
+    <button @onclick="() => LoadDiagram(diagram.File)">
         @diagram.Name
     </button>
 }
-@code{
+@if (StatusMessage is not null)
+{
+    <p>@StatusMessage</p>
+}
+
+@code {
+
     private List<DiagramItem> Diagrams = new();
+    private string? StatusMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        Diagrams = await Http.GetFromJsonAsync<List<DiagramItem>>("Diagrams/Diagrams.json");
+        var result = await Http.GetFromJsonAsync<List<DiagramItem>>(
+            "Diagrams/Diagrams.json");
+
+        if (result != null)
+            Diagrams = result;
     }
 
     public class DiagramItem
     {
-        public string Name { get; set; }
-        public string File { get; set; }
+        public string Name { get; set; } = "";
+        public string File { get; set; } = "";
     }
 
-    private async Task LoadDiagrams(string file)
+    private IJSObjectReference? _module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JS.InvokeVoidAsync(
-            "LoadDiagram.loadDiagram", file);
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "/Javascript/Services/LoadDiagram.js");
+        }
+    }
+
+    private async Task LoadDiagram(string file)
+    {
+        StatusMessage = "CLICK WORKS";
+        try
+        {
+            StatusMessage = $"Loading: {file}";
+            await InvokeAsync(StateHasChanged);
+
+            await Task.Delay(1);
+
+            if (_module is null)
+            {
+                StatusMessage = "JS module not loaded";
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            await _module.InvokeVoidAsync("loadDiagram", file);
+
+            StatusMessage = $"Loaded: {file}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
 }

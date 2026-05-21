@@ -1,5 +1,5 @@
-﻿import { ParseXML } from "../Parser/Parser.js"
-import { BuildDiagram } from "../Services/BuildDiagram.js"
+﻿import { parseXML } from "../Parser/Parser.js"
+import {buildDiagram} from "./BuildDiagram.js"
 
 export async function loadDiagram(file) {
     const response = await fetch(`/diagrams/${file}`);

@@ -1,5 +1,5 @@
 ﻿import { Shape } from "../Models/Shape.js";
-import { CreateShapeType } from "../Factories/ShapeTypeFactory.js";
+import { createShapeType } from "../Factories/ShapeTypeFactory.js";
 
 export function createShape(c) {
     const type = createShapeType(c.type);

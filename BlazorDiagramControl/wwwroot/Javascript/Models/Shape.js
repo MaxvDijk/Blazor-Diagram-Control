@@ -1,16 +1,16 @@
-﻿export class Shape
+export class Shape
 {
     constructor(
-                id,
-                type,
-                left,
-                top,
-                x,
-                y,
-                description,
-                groupId,
-                csObject
-                ) {
+        id,
+        type,
+        left,
+        top,
+        x,
+        y,
+        description,
+        groupId,
+        csObject
+    ) {
         this.id = id;
         this.type = type;
 
@@ -18,7 +18,7 @@
         this.top = top;
         this.x = x;
         this.y = y;
-        
+
         this.description = description;
         this.groupId = groupId;
         this.csObject = csObject;

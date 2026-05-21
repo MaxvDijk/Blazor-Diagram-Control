@@ -8,8 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Components\Javascript\Factories\ShapeTypeFactory.js" />
-    <Compile Include="Components\Javascript\Models\Shape.js" />
+    <None Include="wwwroot\Javascript\Factories\LineFactory.js" />
+    <None Include="wwwroot\Javascript\Factories\ShapeFactory.js" />
+    <None Include="wwwroot\Javascript\Models\Line.js" />
+    <None Include="wwwroot\Javascript\Models\ShapeType.js" />
+    <None Include="wwwroot\Javascript\Parser\Parser.js" />
+    <None Include="wwwroot\Javascript\Services\BuildDiagram.js" />
+    <None Include="wwwroot\Javascript\Services\LoadDiagram.js" />
   </ItemGroup>
 
 </Project>
