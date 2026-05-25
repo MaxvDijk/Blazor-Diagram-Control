@@ -1,8 +1,4 @@
-﻿## ===============================
-## .NET / ASP.NET Core / Blazor
-## ===============================
-
-# Build output
+﻿# Build output
 bin/
 obj/
 
@@ -18,6 +14,9 @@ obj/
 
 # Visual Studio Code
 .vscode/
+# Visual Studio 
+.vs/
+
 
 # ASP.NET Core / Blazor publish output
 publish/
@@ -62,9 +61,6 @@ TestResults/
 # OS files
 .DS_Store
 Thumbs.db
-
-# Docker (if not needed)
-docker-compose.override.yml
 
 # JetBrains Rider build cache
 cmake-build-*/

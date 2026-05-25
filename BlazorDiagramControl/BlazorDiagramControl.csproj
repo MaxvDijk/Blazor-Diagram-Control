@@ -7,4 +7,17 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Javascript\Factories\LineFactory.js" />
+    <None Include="wwwroot\Javascript\Factories\ShapeFactory.js" />
+    <None Include="wwwroot\Javascript\Models\Line.js" />
+    <None Include="wwwroot\Javascript\Parser\Parser.js" />
+    <None Include="wwwroot\Javascript\Services\BuildDiagram.js" />
+    <None Include="wwwroot\Javascript\Services\LoadDiagram.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Javascript\Parser\" />
+  </ItemGroup>
+
 </Project>

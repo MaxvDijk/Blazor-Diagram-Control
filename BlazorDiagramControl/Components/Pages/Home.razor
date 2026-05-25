@@ -1,7 +1,94 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject HttpClient Http
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Diagrams</h1>
 
-Welcome to your new app test.
+@if (Diagrams.Count == 0)
+{
+    <p>Loading...</p>
+}
+
+@foreach (var diagram in Diagrams)
+{
+    <button @onclick="() => LoadDiagram(diagram.File)">
+        @diagram.Name
+    </button>
+}
+@if (StatusMessage is not null)
+{
+    <p>@StatusMessage</p>
+}
+
+<div id="diagram-viewport" class="diagram-viewport">
+    <svg id="diagram-svg" class="diagram-svg">
+
+        <g id="lines-layer"></g>
+        <g id="shapes-layer"></g>
+
+    </svg>
+</div>
+
+@code {
+
+    private List<DiagramItem> Diagrams = new();
+    private string? StatusMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<List<DiagramItem>>(
+            "Diagrams/Diagrams.json");
+
+        if (result != null)
+            Diagrams = result;
+    }
+
+    public class DiagramItem
+    {
+        public string Name { get; set; } = "";
+        public string File { get; set; } = "";
+    }
+
+    private IJSObjectReference? _module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "/Javascript/Services/LoadDiagram.js");
+        }
+    }
+
+    private async Task LoadDiagram(string file)
+    {
+        StatusMessage = "CLICK WORKS";
+        try
+        {
+            StatusMessage = $"Loading: {file}";
+            await InvokeAsync(StateHasChanged);
+
+            await Task.Delay(1);
+
+            if (_module is null)
+            {
+                StatusMessage = "JS module not loaded";
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            await _module.InvokeVoidAsync("loadDiagram", file);
+
+            StatusMessage = $"Loaded: {file}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+}
