@@ -7,9 +7,5 @@ export async function loadDiagram(file) {
     const xmlString = await response.text();
 
     const components = parseXML(xmlString);
-    const diagram = diagramBuilder(components);
-
-    renderDiagram(diagram);
-
-    return diagram;
+    return diagramBuilder(components);
 }

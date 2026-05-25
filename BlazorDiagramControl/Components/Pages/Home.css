@@ -10,3 +10,12 @@
     height: 100%;
     display: block;
 }
+
+.diagram-svg text {
+    user-select: none;
+    pointer-events: none;
+}
+
+.diagram-svg {
+    user-select: none;
+}

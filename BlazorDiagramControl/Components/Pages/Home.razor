@@ -3,7 +3,7 @@
 @inject IJSRuntime JS
 @inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Diagrams</PageTitle>
 
 <h1>Diagrams</h1>
 
@@ -12,23 +12,24 @@
     <p>Loading...</p>
 }
 
-@foreach (var diagram in Diagrams)
+@foreach (var d in Diagrams)
 {
-    <button @onclick="() => LoadDiagram(diagram.File)">
-        @diagram.Name
+    <button @onclick="() => LoadDiagram(d.File)">
+        @d.Name
     </button>
 }
-@if (StatusMessage is not null)
+
+@if (!string.IsNullOrWhiteSpace(StatusMessage))
 {
     <p>@StatusMessage</p>
 }
 
 <div id="diagram-viewport" class="diagram-viewport">
     <svg id="diagram-svg" class="diagram-svg">
-
-        <g id="lines-layer"></g>
-        <g id="shapes-layer"></g>
-
+        <g id="world">
+            <g id="lines-layer"></g>
+            <g id="shapes-layer"></g>
+        </g>
     </svg>
 </div>
 
@@ -36,15 +37,7 @@
 
     private List<DiagramItem> Diagrams = new();
     private string? StatusMessage;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await Http.GetFromJsonAsync<List<DiagramItem>>(
-            "Diagrams/Diagrams.json");
-
-        if (result != null)
-            Diagrams = result;
-    }
+    private IJSObjectReference? _module;
 
     public class DiagramItem
     {
@@ -52,43 +45,39 @@
         public string File { get; set; } = "";
     }
 
-    private IJSObjectReference? _module;
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<List<DiagramItem>>("Diagrams/Diagrams.json");
+        Diagrams = result ?? new();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            _module = await JS.InvokeAsync<IJSObjectReference>(
-                "import", "/Javascript/Services/LoadDiagram.js");
-        }
+        if (!firstRender) return;
+
+        _module = await JS.InvokeAsync<IJSObjectReference>(
+            "import", "/Javascript/Services/initDiagram.js");
     }
 
     private async Task LoadDiagram(string file)
     {
-        StatusMessage = "CLICK WORKS";
         try
         {
-            StatusMessage = $"Loading: {file}";
-            await InvokeAsync(StateHasChanged);
-
-            await Task.Delay(1);
+            StatusMessage = $"Loading {file}";
+            StateHasChanged();
 
             if (_module is null)
-            {
-                StatusMessage = "JS module not loaded";
-                await InvokeAsync(StateHasChanged);
                 return;
-            }
 
-            await _module.InvokeVoidAsync("loadDiagram", file);
+            await _module.InvokeVoidAsync("initDiagram", file);
 
-            StatusMessage = $"Loaded: {file}";
+            StatusMessage = $"Loaded {file}";
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = ex.Message;
         }
 
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
 }
