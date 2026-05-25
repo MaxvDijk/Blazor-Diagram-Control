@@ -5,8 +5,8 @@ export function createLine(c) {
         c.id,
         c.bindingtype,
         c.csObject,
-        c.startId,
-        c.endId,
+        c.StartItemID,
+        c.EndItemID,
         c.description
     );
 }

@@ -20,7 +20,10 @@ function parseComponent(component) {
 
         CSObject: component.getElementsByTagName("CSObject")[0]?.getAttribute("Value"),
         groupId: component.querySelector("GroupID")?.textContent,
-
+        
+        left: parseInt(component.getElementsByTagName("Left")[0]?.getAttribute("Value")?? 0),
+        top: parseInt(component.getElementsByTagName("Top")[0]?.getAttribute("Value")?? 0),
+        
         BindingType: component.querySelector("BindingType")?.textContent,
 
         StartItemID: component.querySelector("StartItemID")?.textContent,

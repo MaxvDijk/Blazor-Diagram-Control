@@ -29,7 +29,7 @@ export function createShapeType(typename){
     const baseShapeType = SHAPE_TYPES[typename] ;
     if (!baseShapeType)
     {
-        throw new Error(`Unknown shapetype: ${ typename }`);
+        return null;
     }
 
     return {...baseShapeType};

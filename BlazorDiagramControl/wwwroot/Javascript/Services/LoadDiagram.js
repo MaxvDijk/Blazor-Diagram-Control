@@ -1,11 +1,15 @@
-﻿import { parseXML } from "../Parser/Parser.js"
-import { DiagramBuilder, DiagramRenderer} from "./BuildDiagram.js"
+import { parseXML } from "./Parser.js"
+import {diagramBuilder} from "./BuildDiagram.js"
+import {renderDiagram} from "../Rendering/RenderDiagram.js";
 
 export async function loadDiagram(file) {
-    const response = await fetch(`/diagrams/${file}`);
+    const response = await fetch(`/Diagrams/${file}`);
     const xmlString = await response.text();
 
     const components = parseXML(xmlString);
-    DiagramBuilder(components);
-    return DiagramRenderer();
+    const diagram = diagramBuilder(components);
+
+    renderDiagram(diagram);
+
+    return diagram;
 }

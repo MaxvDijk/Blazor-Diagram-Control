@@ -1,33 +1,23 @@
 ﻿import { createShape } from "../Factories/ShapeFactory.js"
 import { createLine } from "../Factories/LineFactory.js"
+import { Diagram} from "../Models/Diagram.js"
 
 //Misschien andere naam want vind het zelf onduidelijk
-export function DiagramBuilder(components) {
+export function diagramBuilder(components) {
 
-    const diagram = {
-        Shapes: new Map(),
-        Lines: new Map()
-    }
+    const diagram = new Diagram();
 
-    for (const c in components) {
+    for (const c of components) {
         if (c.diagramType === "Solid") {
-            const shape = createShape(c) 
-            diagram.Shapes.set(shape.id, shape)
+            const shape = createShape(c);
+            if (!shape) continue;
+            diagram.addShape(shape);
         }
         if (c.diagramType === "Connection") {
-            const line = createLine(c)
-            diagram.Lines.set(line.id, line)
+            const line = createLine(c);
+            if (!line) continue;
+            diagram.addLine(line);
         }
     }
-}
-export function DiagramRenderer(){
-    
-}
-export function renderShape(shape){
-    const el = createShape(shape);
-    document.getElementById("shapes-layer").appendChild(el);
-}
-export function renderLine(line){
-    const el = createLine(line);
-    document.getElementById("lines-layer").appendChild(el);
+    return diagram;
 }
