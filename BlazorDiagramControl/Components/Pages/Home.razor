@@ -23,6 +23,15 @@
     <p>@StatusMessage</p>
 }
 
+<div id="diagram-viewport" class="diagram-viewport">
+    <svg id="diagram-svg" class="diagram-svg">
+
+        <g id="lines-layer"></g>
+        <g id="shapes-layer"></g>
+
+    </svg>
+</div>
+
 @code {
 
     private List<DiagramItem> Diagrams = new();

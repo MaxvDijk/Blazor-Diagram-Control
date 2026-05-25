@@ -1,5 +1,5 @@
 ﻿import { Shape } from "../Models/Shape.js";
-import { createShapeType } from "../Factories/ShapeTypeFactory.js";
+import { createShapeType } from "./ShapeTypeFactory";
 
 export function createShape(c) {
     const type = createShapeType(c.type);
@@ -9,8 +9,8 @@ export function createShape(c) {
         type,
         c.left,
         c.top,
-        x = c.left + type.width / 2,
-        y = c.top + type.height / 2,
+        c.left + type.width / 2,
+        c.top + type.height / 2,
         c.description,
         groupId,
         csObject);

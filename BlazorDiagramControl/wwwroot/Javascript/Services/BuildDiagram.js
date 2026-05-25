@@ -2,7 +2,7 @@
 import { createLine } from "../Factories/LineFactory.js"
 
 //Misschien andere naam want vind het zelf onduidelijk
-export function buildDiagram(components) {
+export function DiagramBuilder(components) {
 
     const diagram = {
         Shapes: new Map(),
@@ -19,5 +19,15 @@ export function buildDiagram(components) {
             diagram.Lines.set(line.id, line)
         }
     }
-
+}
+export function DiagramRenderer(){
+    
+}
+export function renderShape(shape){
+    const el = createShape(shape);
+    document.getElementById("shapes-layer").appendChild(el);
+}
+export function renderLine(line){
+    const el = createLine(line);
+    document.getElementById("lines-layer").appendChild(el);
 }

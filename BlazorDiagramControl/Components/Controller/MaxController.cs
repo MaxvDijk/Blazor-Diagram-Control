@@ -1,15 +1,15 @@
 ﻿namespace BlazorDiagramControl.Components.Controller
 {
-    public class MaxController : IControl
+    public class MaxController : IController
     {
-        public bool canAddShape()
+        public bool CanAddShape()
         {
-            return true;
-        }
-        public string addShape()
-        {
-            return "test";
+            throw new NotImplementedException();
         }
 
+        public string? AddShape()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
