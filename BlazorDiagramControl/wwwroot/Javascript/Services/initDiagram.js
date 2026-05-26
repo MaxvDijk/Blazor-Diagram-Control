@@ -6,9 +6,10 @@ export async function initDiagram(file) {
 
     const svg = document.getElementById("diagram-svg");
 
+
     const diagram = await loadDiagram(file);
 
-    renderDiagram(diagram);
+    renderDiagram(diagram, svg);
 
     const drag = createShapeDragController(svg, diagram);
 

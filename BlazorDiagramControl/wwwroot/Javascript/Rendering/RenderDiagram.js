@@ -2,20 +2,18 @@
 import { renderLine } from "./RenderLine.js";
 import { createViewportController } from "../Interaction/ViewportController.js";
 
-const svg = document.getElementById("diagram-svg");
 
-const viewport = createViewportController(svg);
 
-const layers = {
-    lines: svg.querySelector("#lines-layer"),
-    shapes: svg.querySelector("#shapes-layer")
-};
 
-export function renderDiagram(diagram) {
 
-    // IMPORTANT: clear old DOM
-    layers.shapes.innerHTML = "";
-    layers.lines.innerHTML = "";
+export function renderDiagram(diagram, svg) {
+
+    const viewport = createViewportController(svg);
+
+    const layers = {
+        lines: svg.querySelector("#lines-layer"),
+        shapes: svg.querySelector("#shapes-layer")
+    };
 
     for (const shape of diagram.shapes.values()) {
         renderShape(shape, layers.shapes);
