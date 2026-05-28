@@ -38,8 +38,8 @@ export function renderLine(line, diagram, layer) {
     layer.appendChild(text);
 
     // ---- store references ----
-    line._el = el;
-    line._textEl = text;
+    line.el = el;
+    line.textEl = text;
 }
 
 export function updateLine(line, diagram) {
@@ -61,4 +61,10 @@ export function updateLine(line, diagram) {
     line._textEl.setAttribute("y", my);
 
     line._textEl.textContent = line.description ?? "";
+}
+
+export function removeRenderLineElement(line) {
+    if (line._el) {
+        line._el.remove();
+    }
 }

@@ -23,6 +23,7 @@ export class Shape
         this.groupId = groupId;
         this.csObject = csObject;
 
+        this.g = null;
         this.el = null;
         this.textEl = null;
     }

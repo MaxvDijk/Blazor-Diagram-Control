@@ -15,5 +15,6 @@
         this.description = description;
 
         this.el = null;
+        this.textEl = null;
     }
 }

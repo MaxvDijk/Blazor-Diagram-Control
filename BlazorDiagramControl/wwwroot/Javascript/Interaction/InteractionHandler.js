@@ -1,4 +1,7 @@
 ﻿import { getActiveTool } from "./ToolBarButtonController.js";
+import { getSvgPoint } from "../Services/Helpers.js"
+import { removeRenderLineElement } from "../Rendering/RenderLine.js"
+import { removeRenderShapeElement } from "../Rendering/RenderShape.js"
 
 let dotNetRef = null;
 
@@ -16,24 +19,50 @@ export function initInteraction(dotNet) {
         const tool = getActiveTool();
         if (!tool) return;
 
+        const shapeElement = e.target.closest("[data-shape-id]");
+
+        const id = shapeElement?.dataset.shapeId ?? null;
+
         const pos = getSvgPoint(svg, e.clientX, e.clientY);
 
         const payload = {
             tool: tool,
             x: pos.x,
             y: pos.y,
-            targetId: e.target?.dataset?.id || null
-        };
+            id: id
+        }
 
+        let result = await dotNetRef.invokeMethodAsync("ClickHandler", payload);
 
-        await dotNetRef.invokeMethodAsync("CanvasClickHandeler", payload);
+        if (!result.Validation) {
+            return
+        }
+        switch (result.tool) {
+            case "none":
+                return;
+            case "remove":
+                const lines = diagram.linesByShapeId.get(result.id);
+                if (lines) { 
+                    for (let line of lines) {
+                    diagram.removeLine(line.id)
+                    }
+                }
+
+                const shape = diagram.getShape(result.id);
+
+                if (shape) {
+                    removeRenderShapeElement(shape);
+                }
+
+                diagram.removeShape(result.id);
+            case "line":
+                return;
+            case "rectangle":
+            case "circle":
+            case "polygon":
+                return;
+
+        }
     });
 }
 
-function getSvgPoint(svg, clientX, clientY) {
-    const pt = svg.createSVGPoint();
-    pt.x = clientX;
-    pt.y = clientY;
-
-    return pt.matrixTransform(svg.getScreenCTM().inverse());
-}

@@ -2,10 +2,6 @@
 import { renderLine } from "./RenderLine.js";
 import { createViewportController } from "../Interaction/ViewportController.js";
 
-
-
-
-
 export function renderDiagram(diagram, svg) {
 
     const viewport = createViewportController(svg);
@@ -14,6 +10,9 @@ export function renderDiagram(diagram, svg) {
         lines: svg.querySelector("#lines-layer"),
         shapes: svg.querySelector("#shapes-layer")
     };
+
+    layers.lines.innerHTML = "";
+    layers.shapes.innerHTML = "";
 
     for (const shape of diagram.shapes.values()) {
         renderShape(shape, layers.shapes);

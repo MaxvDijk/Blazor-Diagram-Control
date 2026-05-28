@@ -41,8 +41,18 @@
     getLine(id) {
         return this.lines.get(id);
     }
+    getShapeMap() {
+        return this.shapes;
+    }
 
-    removeShape(id) {
+    getLineMap() {
+        return this.lines;
+    }
+    getShapeToLineMap() {
+        return this.linesByShapeId;
+    }
+
+    export removeShape(id) {
         
         for (const [lineId, line] of this.lines) {
 
@@ -54,7 +64,7 @@
         this.shapes.delete(id);
     }
 
-    removeLine(id) {
+    export removeLine(id) {
         this.lines.delete(id);
         this.buildIndex();
     }

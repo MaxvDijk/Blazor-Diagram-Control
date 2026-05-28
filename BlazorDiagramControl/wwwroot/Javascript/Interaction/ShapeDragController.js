@@ -1,5 +1,5 @@
 import { updateShape } from "../Rendering/RenderShape.js";
-import {updateLine} from "../Rendering/RenderLine.js";
+import { updateLine} from "../Rendering/RenderLine.js";
 
 export function bindShapeDragging(diagram, startDrag) {
 
@@ -35,6 +35,9 @@ export function createShapeDragController(svg, diagram) {
         
         lastX = e.clientX;
         lastY = e.clientY;
+
+        s._el.setAttribute("stroke", "blue");
+        s._el.setAttribute("stroke-width", "2");
 
         window.addEventListener("mousemove", onMove);
         window.addEventListener("mouseup", stopDrag);
@@ -77,6 +80,10 @@ export function createShapeDragController(svg, diagram) {
 
     function stopDrag() {
         dragging = false;
+
+        shape._el.setAttribute("stroke", "black")
+        shape._el.setAttribute("stroke-width", "1")
+
         shape = null;
 
         document.body.style.userSelect = "";

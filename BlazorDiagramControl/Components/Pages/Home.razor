@@ -22,16 +22,23 @@
         </ul>
     </div>
     <div class="toolbar">
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("rect"))">
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("None"))">
+            None
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Rect"))">
             Rectangle
         </button>
-
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("circle"))">
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Circle"))">
             Circle
         </button>
-
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("polygon"))">
-            Circle
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Polygon"))">
+            Polygon
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Line"))">
+            Line
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Remove"))">
+            Remove
         </button>
     </div>
 </div>
@@ -51,7 +58,8 @@
     private DotNetObjectReference<Home>? _objRef;
 
     private List<DiagramItem> Diagrams = new();
-    private IJSObjectReference? _module;
+    private IJSObjectReference? interactionModule;
+    private IJSObjectReference? initDiagramModule;
 
 
     public class DiagramItem
@@ -69,12 +77,12 @@
     {
         if (firstRender)
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>(
+            interactionModule = await JS.InvokeAsync<IJSObjectReference>(
                 "import", "/Javascript/Interaction/InteractionHandler.js");
 
             _objRef = DotNetObjectReference.Create(this);
 
-            await _module.InvokeVoidAsync(
+            await interactionModule.InvokeVoidAsync(
                 "initInteraction",
                 _objRef
             );
@@ -83,15 +91,14 @@
 
     private async Task LoadDiagram(string file)
     {
-
-        if (_module is null)
+        if (initDiagramModule is null)
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>(
+            initDiagramModule = await JS.InvokeAsync<IJSObjectReference>(
                 "import", "/Javascript/Services/initDiagram.js");
 
         }
 
-        await _module.InvokeVoidAsync("initDiagram", file);
+        await initDiagramModule.InvokeVoidAsync("initDiagram", file);
     }
 
     private async Task SetTool(string tool)

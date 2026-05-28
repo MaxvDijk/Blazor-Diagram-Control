@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddScoped<MaxController>();
+builder.Services.AddScoped<ToolController>();
 
 builder.Services.AddScoped(sp =>
 {

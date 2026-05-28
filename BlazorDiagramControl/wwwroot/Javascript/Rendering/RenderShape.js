@@ -1,6 +1,7 @@
 ﻿export function renderShape(shape, layer) {
 
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.dataset.shapeId = shape.id;
 
     const el = document.createElementNS("http://www.w3.org/2000/svg", shape.type.tag);
     const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -35,9 +36,9 @@
     layer.appendChild(g);
 
     // store references
-    shape._g = g;
-    shape._el = el;
-    shape._textEl = text;
+    shape.g = g;
+    shape.el = el;
+    shape.textEl = text;
 
     // initial position (CENTER → TOP-LEFT transform)
     updateShape(shape);
@@ -93,3 +94,9 @@ const renderers = {
         el.setAttribute("points", points);
     }
 };
+
+export function removeRenderShapeElement(shape) {
+    if (shape.g) {
+        shape.g.remove();
+    }
+}
