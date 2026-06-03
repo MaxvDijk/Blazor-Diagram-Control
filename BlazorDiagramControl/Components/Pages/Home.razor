@@ -1,50 +1,68 @@
 ﻿@page "/"
+@using BlazorDiagramControl.Components.Controller
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject HttpClient Http
+@inject MaxController maxController
+@inject ToolController toolController
 
-<PageTitle>Home</PageTitle>
 
-<h1>Diagrams</h1>
-
-@if (Diagrams.Count == 0)
-{
-    <p>Loading...</p>
-}
-
-@foreach (var diagram in Diagrams)
-{
-    <button @onclick="() => LoadDiagram(diagram.File)">
-        @diagram.Name
-    </button>
-}
-@if (StatusMessage is not null)
-{
-    <p>@StatusMessage</p>
-}
+<PageTitle>Diagrams</PageTitle>
+<div class="d-flex gap-2">
+    <div class="dropdown ">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Diagrams
+      </button>
+        <ul class="dropdown-menu">
+            @foreach (var d in Diagrams)
+            {
+                <li><button class="dropdown-item" @onclick="() => LoadDiagram(d.File)">
+                    @d.Name
+                </button></li>
+            }
+        </ul>
+    </div>
+    <div class="toolbar">
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("none"))">
+            None
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Process"))">
+            Process
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("State"))">
+            State
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Decision"))">
+            Decision
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("line"))">
+            Line
+        </button>
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("remove"))">
+            Remove
+        </button>
+    </div>
+</div>
 
 <div id="diagram-viewport" class="diagram-viewport">
     <svg id="diagram-svg" class="diagram-svg">
-
-        <g id="lines-layer"></g>
-        <g id="shapes-layer"></g>
-
+        <g id="all-objects">
+            <g id="lines-layer"></g>
+            <g id="shapes-layer"></g>
+        </g>
     </svg>
 </div>
 
 @code {
+    private string? _activeTool;
+
+    private DiagramBehaviour? behaviour;
+    private DotNetObjectReference<DiagramBehaviour>? objRef;
 
     private List<DiagramItem> Diagrams = new();
-    private string? StatusMessage;
+    private IJSObjectReference? interactionModule;
+    private IJSObjectReference? initDiagramModule;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await Http.GetFromJsonAsync<List<DiagramItem>>(
-            "Diagrams/Diagrams.json");
-
-        if (result != null)
-            Diagrams = result;
-    }
 
     public class DiagramItem
     {
@@ -52,43 +70,55 @@
         public string File { get; set; } = "";
     }
 
-    private IJSObjectReference? _module;
-
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<List<DiagramItem>>("Diagrams/Diagrams.json");
+        Diagrams = result ?? new();
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>(
-                "import", "/Javascript/Services/LoadDiagram.js");
+
+            behaviour = new DiagramBehaviour(maxController, toolController);
+            objRef = DotNetObjectReference.Create(behaviour);
+
+
+            interactionModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "/Javascript/Interaction/InteractionHandler.js");
+
+            await interactionModule.InvokeVoidAsync("initInteraction", objRef);
+
+
         }
     }
 
     private async Task LoadDiagram(string file)
     {
-        StatusMessage = "CLICK WORKS";
-        try
+        if (initDiagramModule is null)
         {
-            StatusMessage = $"Loading: {file}";
-            await InvokeAsync(StateHasChanged);
+            initDiagramModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "/Javascript/Services/initDiagram.js");
 
-            await Task.Delay(1);
-
-            if (_module is null)
-            {
-                StatusMessage = "JS module not loaded";
-                await InvokeAsync(StateHasChanged);
-                return;
-            }
-
-            await _module.InvokeVoidAsync("loadDiagram", file);
-
-            StatusMessage = $"Loaded: {file}";
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = $"Error: {ex.Message}";
         }
 
-        await InvokeAsync(StateHasChanged);
+        await initDiagramModule.InvokeVoidAsync("initDiagram", file);
+    }
+
+    private async Task SetTool(string tool)
+    {
+
+        _activeTool = tool;
+
+        var toolbarModule = await JS.InvokeAsync<IJSObjectReference>(
+            "import", "/Javascript/Interaction/ToolBarButtonController.js");
+
+        await toolbarModule.InvokeVoidAsync("setActiveTool", tool);
+
+
+    }
+    public void Dispose()
+    {
+        objRef?.Dispose();
     }
 }

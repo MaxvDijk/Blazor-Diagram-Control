@@ -1,11 +1,13 @@
 ﻿import { createShape } from "../Factories/ShapeFactory.js"
 import { createLine } from "../Factories/LineFactory.js"
-import { Diagram} from "../Models/Diagram.js"
+import { diagram } from "../Services/Helpers.js"
 
 //Misschien andere naam want vind het zelf onduidelijk
 export function diagramBuilder(components) {
 
-    const diagram = new Diagram();
+    diagram.shapes.clear();
+    diagram.lines.clear();
+    diagram.linesByShapeId.clear();
 
     for (const c of components) {
         if (c.diagramType === "Solid") {

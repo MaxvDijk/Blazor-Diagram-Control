@@ -1,12 +1,22 @@
 .diagram-viewport {
-    width: 100%;
-    height: 100%;
+    width: 50%;
+    height: 100%; 
     overflow: hidden;
     position: relative;
+    justify-content: center;
+    align-items: center;
 }
 
 .diagram-svg {
     width: 100%;
     height: 100%;
     display: block;
+}
+
+.diagram-svg text {
+    user-select: none;
+}
+
+.diagram-svg {
+    user-select: none;
 }
