@@ -26,8 +26,8 @@ function parseComponent(component) {
         
         BindingType: component.querySelector("BindingType")?.textContent,
 
-        StartItemID: component.querySelector("StartItemID")?.textContent,
-        EndItemID: component.querySelector("EndItemID")?.textContent,
+        startId: component.querySelector("StartItemID")?.textContent,
+        endId: component.querySelector("EndItemID")?.textContent,
 
         description: component.getAttribute("csDescription")
     };

@@ -11,8 +11,6 @@ namespace BlazorDiagramControl.Components.Controller
         [JSInvokable]
         public bool CanAddShape()
         {
-            
-
             return Convert.ToBoolean(random.Next(2));
 
         }

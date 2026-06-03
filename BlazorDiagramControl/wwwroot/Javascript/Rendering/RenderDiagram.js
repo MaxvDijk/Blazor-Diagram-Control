@@ -1,8 +1,9 @@
 ﻿import { renderShape } from "./RenderShape.js";
 import { renderLine } from "./RenderLine.js";
 import { createViewportController } from "../Interaction/ViewportController.js";
+import { diagram } from "../Services/Helpers.js"
 
-export function renderDiagram(diagram, svg) {
+export function renderDiagram(svg) {
 
     const viewport = createViewportController(svg);
 
@@ -19,7 +20,7 @@ export function renderDiagram(diagram, svg) {
     }
 
     for (const line of diagram.lines.values()) {
-        renderLine(line, diagram, layers.lines);
+        renderLine(line, layers.lines);
     }
 
     const vb = updateViewBox(diagram);

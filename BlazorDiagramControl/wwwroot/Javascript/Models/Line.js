@@ -14,6 +14,7 @@
         this.endId = endId;
         this.description = description;
 
+        this.g = null;
         this.el = null;
         this.textEl = null;
     }

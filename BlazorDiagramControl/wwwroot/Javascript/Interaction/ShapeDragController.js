@@ -1,21 +1,9 @@
 import { updateShape } from "../Rendering/RenderShape.js";
-import { updateLine} from "../Rendering/RenderLine.js";
+import { updateLine } from "../Rendering/RenderLine.js";
+import { diagram } from "../Services/Helpers.js"
+import { getActiveTool } from "../Interaction/ToolBarButtonController.js"
 
-export function bindShapeDragging(diagram, startDrag) {
-
-    for (const shape of diagram.shapes.values()) {
-
-        const el = shape._g;
-        if (!el) continue;
-
-        el.addEventListener("mousedown", (e) => {
-            e.stopPropagation();
-            startDrag(shape, e);
-        });
-    }
-}
-
-export function createShapeDragController(svg, diagram) {
+export function createShapeDragController(svg) {
 
     let dragging = false;
     let shape = null;
@@ -27,6 +15,7 @@ export function createShapeDragController(svg, diagram) {
     let lastY = 0;
 
     function startDrag(s, e) {
+        if (getActiveTool() !== "none" && getActiveTool() !== null) return;
 
         dragging = true;
         shape = s;
@@ -36,15 +25,11 @@ export function createShapeDragController(svg, diagram) {
         lastX = e.clientX;
         lastY = e.clientY;
 
-        s._el.setAttribute("stroke", "blue");
-        s._el.setAttribute("stroke-width", "2");
+        s.el.setAttribute("stroke", "blue");
+        s.el.setAttribute("stroke-width", "2");
 
-        window.addEventListener("mousemove", onMove);
-        window.addEventListener("mouseup", stopDrag);
     }
-
-    function onMove(e) {
-
+     function moveDrag(e){
         if (!dragging || !shape) return;
 
         const dx = e.clientX - lastX;
@@ -52,7 +37,7 @@ export function createShapeDragController(svg, diagram) {
 
         lastX = e.clientX;
         lastY = e.clientY;
-        
+
         shape.x += dx;
         shape.y += dy;
 
@@ -60,7 +45,6 @@ export function createShapeDragController(svg, diagram) {
 
         if (!raf) {
             raf = requestAnimationFrame(() => {
-
                 for (const s of pending) {
                     updateShape(s);
 
@@ -77,20 +61,34 @@ export function createShapeDragController(svg, diagram) {
             });
         }
     }
-
     function stopDrag() {
+        if (!shape) return;
         dragging = false;
 
-        shape._el.setAttribute("stroke", "black")
-        shape._el.setAttribute("stroke-width", "1")
+        shape.el.setAttribute("stroke", "black")
+        shape.el.setAttribute("stroke-width", "1")
 
         shape = null;
 
         document.body.style.userSelect = "";
-
-        window.removeEventListener("mousemove", onMove);
-        window.removeEventListener("mouseup", stopDrag);
     }
 
-    return { startDrag };
+    function handlePointerDown(e) {
+        const el = e.target.closest("[data-shape-id]");
+        if (!el) return;
+
+        const s = diagram.shapes.get(el.dataset.shapeId);
+        if (!s) return;
+
+        startDrag(s, e);
+
+        svg.setPointerCapture(e.pointerId);
+    }
+
+    svg.addEventListener("pointerdown", handlePointerDown);
+    svg.addEventListener("pointermove", moveDrag);
+    svg.addEventListener("pointerup", stopDrag);
+    svg.addEventListener("pointercancel", stopDrag);
+
+    return;
 }

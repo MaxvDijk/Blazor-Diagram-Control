@@ -6,6 +6,11 @@ export function createShape(c) {
     if( !type ){
         return null;
     }
+
+    if ((c.left === null || c.top === null) && type !== null) {
+        c.left = c.x - type.width / 2;
+        c.top = c.y - type.height / 2;
+    }
     
     return new Shape(
         c.id,

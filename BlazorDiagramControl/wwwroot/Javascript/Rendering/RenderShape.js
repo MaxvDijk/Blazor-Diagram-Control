@@ -1,7 +1,7 @@
-﻿export function renderShape(shape, layer) {
+﻿export function renderShape(shape, layer, startDrag) {
 
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    g.dataset.shapeId = shape.id;
+    g.setAttribute("data-shape-id", shape.id)
 
     const el = document.createElementNS("http://www.w3.org/2000/svg", shape.type.tag);
     const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -24,11 +24,9 @@
     text.setAttribute("text-anchor", "middle");
     text.setAttribute("dominant-baseline", "middle");
 
-    const cx = shape.type.width / 2;
-    const cy = shape.type.height / 2;
 
-    text.setAttribute("x", cx);
-    text.setAttribute("y", cy);
+    text.setAttribute("x", 0);
+    text.setAttribute("y", 0);
 
     // ---- assemble ----
     g.appendChild(el);
@@ -42,31 +40,29 @@
 
     // initial position (CENTER → TOP-LEFT transform)
     updateShape(shape);
+
 }
 
 
 export function updateShape(shape) {
 
-    const g = shape._g;
+    const g = shape.g;
     if (!g) return;
-
-    const x = shape.x - shape.type.width / 2;
-    const y = shape.y - shape.type.height / 2;
 
     g.setAttribute(
         "transform",
-        `translate(${x}, ${y})`
+        `translate(${shape.x}, ${shape.y})`
     );
 
-    if (shape._textEl) {
-        shape._textEl.textContent = shape.description ?? "";
+    if (shape.textEl) {
+        shape.textEl.textContent = shape.description ?? "";
     }
 }
 const renderers = {
 
     rect(el, shape) {
-        el.setAttribute("x", 0);
-        el.setAttribute("y", 0);
+        el.setAttribute("x", -shape.type.width / 2);
+        el.setAttribute("y", -shape.type.height / 2);
         el.setAttribute("width", shape.type.width);
         el.setAttribute("height", shape.type.height);
     },
@@ -74,9 +70,9 @@ const renderers = {
     circle(el, shape) {
         const r = shape.type.width / 2;
 
-        el.setAttribute("cx", r);
-        el.setAttribute("cy", r);
-        el.setAttribute("r", r);
+        el.setAttribute("cx", 0);
+        el.setAttribute("cy", 0);
+        el.setAttribute("r", shape.type.width /2);
     },
 
     polygon(el, shape) {
@@ -85,10 +81,12 @@ const renderers = {
         const h = shape.type.height;
 
         const points = [
-                    [w / 2, 0],
-                    [w, h / 2],
-                    [w / 2, h],
-                    [0, h / 2]
+
+                    [0, -h / 2],        
+                    [w / 2, 0],         
+                    [0, h / 2],         
+                    [-w / 2, 0]
+
         ].map(p => p.join(",")).join(" ");
 
         el.setAttribute("points", points);

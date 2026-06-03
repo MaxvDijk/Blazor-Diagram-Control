@@ -5,5 +5,6 @@
         bool CanAddShape();
         string? AddShape();
         bool CanRemoveShape();
+        
     }
 }

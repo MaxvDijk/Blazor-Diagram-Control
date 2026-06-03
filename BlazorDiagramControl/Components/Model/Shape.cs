@@ -3,7 +3,7 @@
     public class Shape
     {
         public required string id;
-        public int x;
-        public int y;
+        public double x;
+        public double y;
     }
 }

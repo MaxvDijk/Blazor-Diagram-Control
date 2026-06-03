@@ -8,14 +8,15 @@ namespace BlazorDiagramControl.Components.Controller
         
         public Payload ToolHandler(Payload payload)
         {
+            Console.WriteLine("Tool from c#"  + payload.Tool);
             switch (payload.Tool)
             {
                 case "none":
                     payload.Validation = false;
                     return payload;
-                case "rectangle":
-                case "circle":
-                case "polygon":
+                case "Process":
+                case "State":
+                case "Decision":
                     if (maxController.CanAddShape())
                     {
                         payload.Id = maxController.AddShape();
@@ -27,7 +28,7 @@ namespace BlazorDiagramControl.Components.Controller
                     }
                     return payload;
                 case "line":
-                    payload.Validation = false;
+                    payload.Validation = true;
                     return payload;
                 case "remove":
                     if(maxController.CanRemoveShape())

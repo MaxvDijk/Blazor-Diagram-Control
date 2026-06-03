@@ -4,6 +4,7 @@
 @inject IJSRuntime JS
 @inject HttpClient Http
 @inject MaxController maxController
+@inject ToolController toolController
 
 
 <PageTitle>Diagrams</PageTitle>
@@ -22,22 +23,22 @@
         </ul>
     </div>
     <div class="toolbar">
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("None"))">
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("none"))">
             None
         </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("Rect"))">
-            Rectangle
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Process"))">
+            Process
         </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("Circle"))">
-            Circle
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("State"))">
+            State
         </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("Polygon"))">
-            Polygon
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("Decision"))">
+            Decision
         </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("Line"))">
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("line"))">
             Line
         </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("Remove"))">
+        <button class="btn btn-secondary" @onclick="@(() => SetTool("remove"))">
             Remove
         </button>
     </div>
@@ -55,7 +56,8 @@
 @code {
     private string? _activeTool;
 
-    private DotNetObjectReference<Home>? _objRef;
+    private DiagramBehaviour? behaviour;
+    private DotNetObjectReference<DiagramBehaviour>? objRef;
 
     private List<DiagramItem> Diagrams = new();
     private IJSObjectReference? interactionModule;
@@ -77,15 +79,17 @@
     {
         if (firstRender)
         {
+
+            behaviour = new DiagramBehaviour(maxController, toolController);
+            objRef = DotNetObjectReference.Create(behaviour);
+
+
             interactionModule = await JS.InvokeAsync<IJSObjectReference>(
                 "import", "/Javascript/Interaction/InteractionHandler.js");
 
-            _objRef = DotNetObjectReference.Create(this);
+            await interactionModule.InvokeVoidAsync("initInteraction", objRef);
 
-            await interactionModule.InvokeVoidAsync(
-                "initInteraction",
-                _objRef
-            );
+
         }
     }
 
@@ -112,5 +116,9 @@
         await toolbarModule.InvokeVoidAsync("setActiveTool", tool);
 
 
+    }
+    public void Dispose()
+    {
+        objRef?.Dispose();
     }
 }

@@ -13,13 +13,13 @@ namespace BlazorDiagramControl.Components.Controller
             this.maxController = maxController;
             this.toolController = toolController;
         }
-        [JSInvokable]
+        [JSInvokable("ClickHandler")]
         public Payload ClickHandler(Payload payload)
         {
             return toolController.ToolHandler(payload);
 
         }
-        public bool CanAddShape(int x, int y) 
+        public bool CanAddShape() 
         {
             return maxController.CanAddShape();
         }
