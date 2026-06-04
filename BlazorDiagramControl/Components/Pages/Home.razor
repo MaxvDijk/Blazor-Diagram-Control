@@ -8,50 +8,50 @@
 
 
 <PageTitle>Diagrams</PageTitle>
-<div class="d-flex gap-2">
-    <div class="dropdown ">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Diagrams
-      </button>
-        <ul class="dropdown-menu">
-            @foreach (var d in Diagrams)
+
+<div class="container-fluid p-0">
+    <div id="toolbar" class="d-flex flex-nowrap gap-2 p-2 mb-2 w-100 bg-secondary border rounded">
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Diagrams
+          </button>
+            <ul class="dropdown-menu gap-2">
+                @foreach (var d in Diagrams)
+                {
+                    <li>
+                        <button class="dropdown-item" @onclick="() => LoadDiagram(d.File)">
+                            @d.Name
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="">
+            <button class="btn btn-success" @onclick="@(() => SaveDiagram())">
+                Save
+            </button>
+        </div>
+        <div class="d-flex gap-2">
+            @foreach (string tool in Tools)
             {
-                <li><button class="dropdown-item" @onclick="() => LoadDiagram(d.File)">
-                    @d.Name
-                </button></li>
+                <button class="btn btn-primary gap-2" @onclick="@(() => SetTool(tool))">
+                @tool
+                </button>
             }
-        </ul>
+        </div>
     </div>
-    <div class="toolbar">
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("none"))">
-            None
-        </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("Process"))">
-            Process
-        </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("State"))">
-            State
-        </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("Decision"))">
-            Decision
-        </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("line"))">
-            Line
-        </button>
-        <button class="btn btn-secondary" @onclick="@(() => SetTool("remove"))">
-            Remove
-        </button>
+    <div class="border">
+        <div id="diagram-viewport" class="diagram-viewport">
+            <svg id="diagram-svg" class="diagram-svg">
+                <g id="all-objects">
+                    <g id="lines-layer"></g>
+                    <g id="shapes-layer"></g>
+                </g>
+            </svg>
+        </div>
     </div>
 </div>
 
-<div id="diagram-viewport" class="diagram-viewport">
-    <svg id="diagram-svg" class="diagram-svg">
-        <g id="all-objects">
-            <g id="lines-layer"></g>
-            <g id="shapes-layer"></g>
-        </g>
-    </svg>
-</div>
 
 @code {
     private string? _activeTool;
@@ -59,10 +59,13 @@
     private DiagramBehaviour? behaviour;
     private DotNetObjectReference<DiagramBehaviour>? objRef;
 
-    private List<DiagramItem> Diagrams = new();
     private IJSObjectReference? interactionModule;
-    private IJSObjectReference? initDiagramModule;
 
+    private IJSObjectReference? initDiagramModule;
+    private IJSObjectReference? saveDiagramModule;
+
+    private List<DiagramItem> Diagrams = new();
+    public string[] Tools = {"none", "Process", "State", "Decision", "line", "remove" };
 
     public class DiagramItem
     {
@@ -88,8 +91,6 @@
                 "import", "/Javascript/Interaction/InteractionHandler.js");
 
             await interactionModule.InvokeVoidAsync("initInteraction", objRef);
-
-
         }
     }
 
@@ -114,8 +115,13 @@
             "import", "/Javascript/Interaction/ToolBarButtonController.js");
 
         await toolbarModule.InvokeVoidAsync("setActiveTool", tool);
+    }
+    private async Task SaveDiagram()
+    {
+        saveDiagramModule = await JS.InvokeAsync<IJSObjectReference>(
+            "import", "/Javascript/Interaction/SaveDiagramButton.js");
 
-
+        await saveDiagramModule.InvokeVoidAsync("saveDiagram");
     }
     public void Dispose()
     {

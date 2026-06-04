@@ -2,13 +2,16 @@
     constructor(
         id,
         bindingType,
+        diagramType,
         csObject,
         startId,
         endId,
         description
     ) {
         this.id = id;
-        this.bindingType = bindingType
+        this.bindingType = bindingType;
+        this.diagramType = diagramType;
+
         this.csObject = csObject;
         this.startId = startId;
         this.endId = endId;

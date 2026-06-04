@@ -5,12 +5,12 @@ namespace BlazorDiagramControl.Components.Controller
 {
     public class DiagramBehaviour
     {
-        private readonly MaxController maxController;
+        private readonly MaxController maxBehaviour;
         private readonly ToolController toolController;
 
-        public DiagramBehaviour(MaxController maxController, ToolController toolController)
+        public DiagramBehaviour(MaxController maxBehaviour, ToolController toolController)
         {
-            this.maxController = maxController;
+            this.maxBehaviour = maxBehaviour;
             this.toolController = toolController;
         }
         [JSInvokable("ClickHandler")]
@@ -21,7 +21,7 @@ namespace BlazorDiagramControl.Components.Controller
         }
         public bool CanAddShape() 
         {
-            return maxController.CanAddShape();
+            return maxBehaviour.CanAddShape();
         }
 
     }
