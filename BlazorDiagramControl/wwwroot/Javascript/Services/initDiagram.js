@@ -1,7 +1,10 @@
 import { loadDiagram } from "./loadDiagram.js";
 import { renderDiagram } from "../Rendering/RenderDiagram.js";
 import { diagram } from "../Services/Helpers.js";
-import { createShapeDragController } from "../Interaction/ShapeDragController.js"
+import { createViewportController } from "../Interaction/ViewportController.js";
+import { createShapeDragController } from "../Interaction/ShapeDragController.js";
+
+let viewport = null;
 
 export async function initDiagram(file) {
 
@@ -21,8 +24,13 @@ export async function initDiagram(file) {
         diagram.linesByShapeId.clear();
     }
 
-    renderDiagram(svg);
-    createShapeDragController(svg);
+    if (!viewport) { 
+        viewport = createViewportController(svg);
+        createShapeDragController(svg, viewport);
+    }
+
+    renderDiagram(svg, viewport);
+
 
     return diagram;
 }

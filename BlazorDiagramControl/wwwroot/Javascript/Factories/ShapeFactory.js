@@ -15,6 +15,7 @@ export function createShape(c) {
     return new Shape(
         c.id,
         type,
+        c.diagramType,
         c.left,
         c.top,
         c.left + type.width / 2,

@@ -10,5 +10,14 @@
   {
     "Name": "Radiologieaanvraag",
     "File": "Radiologieaanvraag.xml"
+  },
+  {
+    "Name": "test",
+    "File": "test.xml"
+  },
+  {
+    "Name": "test2",
+    "File": "test2.xml"
   }
+
 ]

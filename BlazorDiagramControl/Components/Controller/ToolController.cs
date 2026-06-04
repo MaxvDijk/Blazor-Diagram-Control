@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace BlazorDiagramControl.Components.Controller
 {
-    public class ToolController(MaxController maxController)
+    public class ToolController(MaxController maxBehaviour)
     {
         
         public Payload ToolHandler(Payload payload)
@@ -17,9 +17,9 @@ namespace BlazorDiagramControl.Components.Controller
                 case "Process":
                 case "State":
                 case "Decision":
-                    if (maxController.CanAddShape())
+                    if (maxBehaviour.CanAddShape())
                     {
-                        payload.Id = maxController.AddShape();
+                        payload.Id = maxBehaviour.AddShape();
                         payload.Validation = true;
                     }
                     else
@@ -31,7 +31,7 @@ namespace BlazorDiagramControl.Components.Controller
                     payload.Validation = true;
                     return payload;
                 case "remove":
-                    if(maxController.CanRemoveShape())
+                    if(maxBehaviour.CanRemoveShape())
                     {
                         payload.Validation = true;
                     }

@@ -1,11 +1,8 @@
 ﻿import { renderShape } from "./RenderShape.js";
 import { renderLine } from "./RenderLine.js";
-import { createViewportController } from "../Interaction/ViewportController.js";
 import { diagram } from "../Services/Helpers.js"
 
-export function renderDiagram(svg) {
-
-    const viewport = createViewportController(svg);
+export function renderDiagram(svg, viewport) {
 
     const layers = {
         lines: svg.querySelector("#lines-layer"),

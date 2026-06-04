@@ -3,6 +3,7 @@ export class Shape
     constructor(
         id,
         type,
+        diagramType,
         left,
         top,
         x,
@@ -13,6 +14,7 @@ export class Shape
     ) {
         this.id = id;
         this.type = type;
+        this.diagramType = diagramType;
 
         this.left = left;
         this.top = top;

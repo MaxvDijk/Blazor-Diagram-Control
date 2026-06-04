@@ -3,7 +3,7 @@ import { updateLine } from "../Rendering/RenderLine.js";
 import { diagram } from "../Services/Helpers.js"
 import { getActiveTool } from "../Interaction/ToolBarButtonController.js"
 
-export function createShapeDragController(svg) {
+export function createShapeDragController(svg, viewport) {
 
     let dragging = false;
     let shape = null;
@@ -35,11 +35,13 @@ export function createShapeDragController(svg) {
         const dx = e.clientX - lastX;
         const dy = e.clientY - lastY;
 
+        const scale = viewport.getScale();
+
+         shape.x += dx * scale.scaleX;
+         shape.y += dy * scale.scaleY;
+
         lastX = e.clientX;
         lastY = e.clientY;
-
-        shape.x += dx;
-        shape.y += dy;
 
         pending.add(shape);
 
@@ -65,8 +67,8 @@ export function createShapeDragController(svg) {
         if (!shape) return;
         dragging = false;
 
-        shape.el.setAttribute("stroke", "black")
-        shape.el.setAttribute("stroke-width", "1")
+        shape.el.setAttribute("stroke", "black");
+        shape.el.setAttribute("stroke-width", "1");
 
         shape = null;
 

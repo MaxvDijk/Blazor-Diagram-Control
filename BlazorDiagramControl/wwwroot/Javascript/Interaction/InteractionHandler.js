@@ -89,6 +89,7 @@ export function initInteraction(dotNet) {
 
                     let c = {
                         id: crypto.randomUUID(),
+                        diagramType: "Connection",
                         bindingType: null,
                         csObject: null,
                         startId: startShape.id,
@@ -114,6 +115,7 @@ export function initInteraction(dotNet) {
                 let c = {
                     id: result.id,
                     type: result.tool,
+                    diagramType: "Solid",
                     left: null,
                     top: null,
                     x: Number(result.x),
