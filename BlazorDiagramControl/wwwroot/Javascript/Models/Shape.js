@@ -10,7 +10,8 @@ export class Shape
         y,
         description,
         groupId,
-        csObject
+        csObject,
+        color
     ) {
         this.id = id;
         this.type = type;
@@ -24,6 +25,8 @@ export class Shape
         this.description = description;
         this.groupId = groupId;
         this.csObject = csObject;
+
+        this.color = color;
 
         this.g = null;
         this.el = null;

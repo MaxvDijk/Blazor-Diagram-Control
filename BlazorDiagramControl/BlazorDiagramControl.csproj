@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Controller\ToolController.cs" />
+    <Compile Remove="Components\DiagramBehaviour\DiagramBehaviour.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\Javascript\Factories\LineFactory.js" />
     <None Include="wwwroot\Javascript\Factories\ShapeFactory.js" />
     <None Include="wwwroot\Javascript\Models\Line.js" />
@@ -17,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Controller\" />
+    <Folder Include="Components\DiagramBehaviour\" />
     <Folder Include="wwwroot\Javascript\Parser\" />
   </ItemGroup>
 

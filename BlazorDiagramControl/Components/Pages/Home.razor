@@ -1,10 +1,13 @@
 ﻿@page "/"
+@using BlazorDiagramControl.Components.Behavior
+@using BlazorDiagramControl.Components.Classes
 @using BlazorDiagramControl.Components.Controller
+@using System.Text.Json
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject HttpClient Http
-@inject MaxController maxController
-@inject ToolController toolController
+@inject MaxBehavior maxBehavior
+
 
 
 <PageTitle>Diagrams</PageTitle>
@@ -39,10 +42,21 @@
                 </button>
             }
         </div>
+        <div class="d-flex gap-2">
+            @foreach (DiagramTemplate itemTemplate in ItemTemplates)
+            {
+                <div draggable="true" @ondrag="@((test) => Console.WriteLine("DRAGGING"))" @ondragend=" (e) => DragEnd(e, itemTemplate.Description)">
+                    <button class="btn btn-primary gap-2" @onclick="@(() => SetTemplate(itemTemplate.Description))">
+                        @itemTemplate.Description
+                    </button>
+                </div>
+     
+            }
+        </div>
     </div>
-    <div class="border">
-        <div id="diagram-viewport" class="diagram-viewport">
-            <svg id="diagram-svg" class="diagram-svg">
+    <div class="border dropzone">
+        <div id="diagram-viewport" class="diagram-viewport ">
+            <svg id="diagram-svg" class="diagram-svg ">
                 <g id="all-objects">
                     <g id="lines-layer"></g>
                     <g id="shapes-layer"></g>
@@ -56,41 +70,86 @@
 @code {
     private string? _activeTool;
 
-    private DiagramBehaviour? behaviour;
-    private DotNetObjectReference<DiagramBehaviour>? objRef;
+    private object DraggedItem;
 
-    private IJSObjectReference? interactionModule;
+    private DiagramBehavior? behavior;
+
 
     private IJSObjectReference? initDiagramModule;
     private IJSObjectReference? saveDiagramModule;
+    IJSObjectReference generateModule;
 
     private List<DiagramItem> Diagrams = new();
-    public string[] Tools = {"none", "Process", "State", "Decision", "line", "remove" };
+    public string[] Tools = {"none", "line", "remove" };
+    public List<DiagramTemplate> ItemTemplates = new List<DiagramTemplate>();
+
+    private double[] Position;
 
     public class DiagramItem
     {
         public string Name { get; set; } = "";
         public string File { get; set; } = "";
     }
+    private async Task DragEnd(DragEventArgs e,string type)
+    {
+
+        Position = [e.ClientX, e.ClientY];
+        await SetTemplate(type);
+    }
+
+
+    private async Task SetTemplate(string type)
+    {
+        foreach (DiagramTemplate template in ItemTemplates)
+        {
+            if (template.Description == type && template.CanApply())
+            {
+                template.Apply();
+            }
+        }
+    }
+    private async Task GetTemplates()
+    {
+        maxBehavior.InitializeTemplates();
+        ItemTemplates = maxBehavior.Templates;
+    }
 
     protected override async Task OnInitializedAsync()
     {
+        await GetTemplates();
         var result = await Http.GetFromJsonAsync<List<DiagramItem>>("Diagrams/Diagrams.json");
         Diagrams = result ?? new();
+
+        maxBehavior.Items.CollectionChanged += ItemsChanged;
+        maxBehavior.Connections.CollectionChanged += ConnectionsChanged;
+    }
+    public async void ItemsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        foreach (object model in e.NewItems)
+        {
+            var itemDef = maxBehavior.ItemDefinitionForItem(model);
+            Console.WriteLine(JsonSerializer.Serialize(itemDef));
+            generateModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "/Javascript/Services/GenerateShape.js");
+
+            await generateModule.InvokeVoidAsync("generateShape", itemDef, Position);
+
+        }
+    }
+
+    private void ConnectionsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
 
-            behaviour = new DiagramBehaviour(maxController, toolController);
-            objRef = DotNetObjectReference.Create(behaviour);
+            // IJSObjectReference interactionModule = await JS.InvokeAsync<IJSObjectReference>(
+            //     "import", "/Javascript/Interaction/InteractionHandler.js");
 
-
-            interactionModule = await JS.InvokeAsync<IJSObjectReference>(
-                "import", "/Javascript/Interaction/InteractionHandler.js");
-
-            await interactionModule.InvokeVoidAsync("initInteraction", objRef);
+            // await interactionModule.InvokeVoidAsync("initInteraction");
         }
     }
 
@@ -123,8 +182,8 @@
 
         await saveDiagramModule.InvokeVoidAsync("saveDiagram");
     }
-    public void Dispose()
-    {
-        objRef?.Dispose();
-    }
+    // public void Dispose()
+    // {
+    //     objRef?.Dispose();
+    // }
 }

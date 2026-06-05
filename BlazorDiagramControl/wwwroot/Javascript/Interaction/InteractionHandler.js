@@ -9,7 +9,7 @@ import { createShapeDragController } from "./ShapeDragController.js";
 let dotNetRef = null;
 let clicked = null;
 
-export function initInteraction(dotNet) {
+export function initInteraction() {
     dotNetRef = dotNet;
 
     const svg = document.getElementById("diagram-svg");
