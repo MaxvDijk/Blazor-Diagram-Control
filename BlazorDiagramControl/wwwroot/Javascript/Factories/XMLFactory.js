@@ -5,7 +5,7 @@
         xml += `<Component DiagramType="${shape.diagramType}" csDescription="${shape.description}">
                     <CSObject Value="${shape.csObject}" />
                     <ID>${shape.id}</ID>
-                    <GroupID>${shape.groupId}</GroupID>
+                    <GroupID>${shape.groupId || null}</GroupID>
                     <Left Value="${shape.left}" />
                     <Top Value="${shape.top}" />
                     <Type>${shape.type.shapeType}</Type>

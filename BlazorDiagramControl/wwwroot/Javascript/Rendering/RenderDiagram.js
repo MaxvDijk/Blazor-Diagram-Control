@@ -2,12 +2,8 @@
 import { renderLine } from "./RenderLine.js";
 import { diagram } from "../Services/Helpers.js"
 
-export function renderDiagram(svg, viewport) {
+export function renderDiagram(svg, viewport, layers) {
 
-    const layers = {
-        lines: svg.querySelector("#lines-layer"),
-        shapes: svg.querySelector("#shapes-layer")
-    };
 
     layers.lines.innerHTML = "";
     layers.shapes.innerHTML = "";

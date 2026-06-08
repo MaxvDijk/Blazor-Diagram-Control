@@ -1,5 +1,5 @@
 using BlazorDiagramControl.Components;
-using BlazorDiagramControl.Components.Controller;
+using BlazorDiagramControl.Components.Behavior;
 using Microsoft.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);

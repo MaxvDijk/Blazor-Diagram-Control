@@ -1,0 +1,52 @@
+<Designer>
+                <Components><Component DiagramType="Solid" csDescription="begin">
+                    <CSObject Value="CS0" />
+                    <ID>186b55e6-4042-45f5-87df-6fe9f542c632</ID>
+                    <GroupID>null</GroupID>
+                    <Left Value="16.531593322753906" />
+                    <Top Value="58.777618408203125" />
+                    <Type>Begin</Type>
+                </Component><Component DiagramType="Solid" csDescription="Proces">
+                    <CSObject Value="CS1" />
+                    <ID>7c631107-0a8f-4561-89c2-5f3a2af4aa03</ID>
+                    <GroupID>null</GroupID>
+                    <Left Value="330.85943603515625" />
+                    <Top Value="42.484169006347656" />
+                    <Type>Process</Type>
+                </Component><Component DiagramType="Solid" csDescription="Choice">
+                    <CSObject Value="CS2" />
+                    <ID>69ad3df0-f6c2-4892-85b8-0d2621dcfa9f</ID>
+                    <GroupID>null</GroupID>
+                    <Left Value="498.36279296875" />
+                    <Top Value="96.73133850097656" />
+                    <Type>Decision</Type>
+                </Component><Component DiagramType="Solid" csDescription="End">
+                    <CSObject Value="CS3" />
+                    <ID>de0306fc-f026-4e44-b2e8-5441b88bc7e8</ID>
+                    <GroupID>null</GroupID>
+                    <Left Value="284.6946716308594" />
+                    <Top Value="189.8041229248047" />
+                    <Type>End</Type>
+                </Component><Component DiagramType="Solid" csDescription="begin">
+                    <CSObject Value="CS4" />
+                    <ID>4f4d0c1b-7470-431a-96dd-84f1759020f6</ID>
+                    <GroupID>null</GroupID>
+                    <Left Value="205.2640838623047" />
+                    <Top Value="122.59364318847656" />
+                    <Type>Begin</Type>
+                </Component><Component DiagramType="Solid" csDescription="Proces">
+                    <CSObject Value="CS5" />
+                    <ID>fca140bf-4066-40c3-a4fa-def81ba2edc7</ID>
+                    <GroupID>null</GroupID>
+                    <Left Value="181.50279235839844" />
+                    <Top Value="125.98811340332031" />
+                    <Type>Process</Type>
+                </Component><Component DiagramType="Solid" csDescription="Choice">
+                    <CSObject Value="CS6" />
+                    <ID>e6ee6db1-bc43-4e47-83d2-a3268096372b</ID>
+                    <GroupID>null</GroupID>
+                    <Left Value="408.7488098144531" />
+                    <Top Value="175.48301696777344" />
+                    <Type>Decision</Type>
+                </Component>  </Components>
+            </Designer>

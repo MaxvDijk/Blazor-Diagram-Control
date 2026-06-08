@@ -1,0 +1,84 @@
+﻿import { createShape } from "../Factories/ShapeFactory.js"
+import { createLine } from "../Factories/LineFactory.js"
+import { diagram, getSvgPoint } from "./Helpers.js"
+import { initShape } from "../Services/initializer.js"
+
+let svg = document.getElementById("diagram-svg");
+//Misschien andere naam want vind het zelf onduidelijk
+export function diagramBuilder(components) {
+
+    diagram.shapes.clear();
+    diagram.lines.clear();
+    diagram.linesByShapeId.clear();
+
+    for (const c of components) {
+        if (c.diagramType === "Solid") {
+            const shape = createShape(c);
+            if (!shape) continue;
+            diagram.addShape(shape);
+        }
+        if (c.diagramType === "Connection") {
+            const line = createLine(c);
+            if (!line) continue;
+            diagram.addLine(line);
+        }
+    }
+    return diagram;
+}
+
+export function shapeBuilder(itemDef, x, y, id) {
+    if (!svg) {
+        svg = document.getElementById("diagram-svg");
+    }
+
+    let points = getSvgPoint(svg, x, y);
+    if (points.x < 0) {
+        points.x = 100
+    }
+    if (points.y < 0) {
+        points.y = 100
+    }
+    console.log(points)
+    let testObject = JSON.parse(itemDef)
+    let c = {
+        id: crypto.randomUUID(),
+        type: GetShapeType(testObject.ItemType),
+        diagramType: "Solid",
+        left: null,
+        top: null,
+        x: points.x,
+        y: points.y,
+        description: testObject.Description,
+        csObject: id,
+        color: testObject.Color,
+    }
+    let newShape = createShape(c);
+    initShape(newShape)
+}
+
+function GetShapeType(type) {
+    switch (type) {
+        case 0:
+            return "Begin";
+        case 1:
+            return "Process";
+        case 2:
+            return "Decision";
+        case 3:
+            return "Comment";
+        case 4:
+            return "Variable";
+        case 5:
+            return "Junction";
+        case 6:
+            return "State";
+        case 7:
+            return "Group";
+        case 8:
+            return "SubContainer";
+        case 9:
+            return "End";
+        case 10:
+            return "ConncetionPoint";
+    }
+}

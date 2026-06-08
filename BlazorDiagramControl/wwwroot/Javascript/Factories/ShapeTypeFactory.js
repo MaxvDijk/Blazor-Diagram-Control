@@ -13,6 +13,13 @@ const SHAPE_TYPES = {
         height: 50,
         color: [255, 189, 129]
     },
+    Decision: {
+        shapeType: "Decision",
+        tag: "polygon",
+        width: 80,
+        height: 80,
+        color: [125, 183, 154]
+    },
     State: {
         shapeType:"State",
         tag: "circle",
@@ -20,13 +27,13 @@ const SHAPE_TYPES = {
         height: 80,
         color: [148, 227, 234]
     },
-    Decision: {
-        shapeType: "Decision",
-        tag: "polygon",
-        width: 80,
-        height: 80,
-        color: [125, 183, 154]
-    }
+    End: {
+        shapeType: "End",
+        tag: "rect",
+        width: 100,
+        height: 50,
+        color: [206, 206, 81]
+    },
 };
 
 export function createShapeType(typename){

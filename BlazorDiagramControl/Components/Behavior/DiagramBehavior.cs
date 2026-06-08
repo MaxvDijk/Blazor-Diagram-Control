@@ -5,6 +5,8 @@ namespace BlazorDiagramControl.Components.Behavior
 {
     public abstract class DiagramBehavior
     {
+
+
         private List<DiagramTemplate> _template = new List<DiagramTemplate>();
         public List<DiagramTemplate> Templates
         {
@@ -28,5 +30,6 @@ namespace BlazorDiagramControl.Components.Behavior
         public abstract void InitializeTemplates();
         internal abstract ItemDefinition ItemDefinitionForItem(object item);
         public abstract bool CanRemoveItem();
+        public abstract string IdForObject(object targetObject);
     }
 }

@@ -1,4 +1,4 @@
-﻿export function renderShape(shape, layer, startDrag) {
+﻿export function renderShape(shape, layer) {
 
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     g.setAttribute("data-shape-id", shape.id)

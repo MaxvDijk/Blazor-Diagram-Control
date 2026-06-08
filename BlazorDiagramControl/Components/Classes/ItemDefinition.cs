@@ -8,7 +8,7 @@
         public string Content;
         public DiagramItemType ItemType;
 
-        private int[] color;
+        public int[] Color;
         public ItemDefinition(DiagramItemType diagramItemType)
         {
             ItemType = diagramItemType;
@@ -20,7 +20,7 @@
             switch (ItemType)
             {
                 case DiagramItemType.Begin:
-                    color = beginColor;
+                    Color = beginColor;
                     break;
                 case DiagramItemType.Process:
                 case DiagramItemType.Decision:
@@ -32,7 +32,7 @@
                 case DiagramItemType.SubContainer:
                 case DiagramItemType.End:
                 case DiagramItemType.ConnectionPoint:
-                    color = processcolor;
+                    Color = processcolor;
                     break;
             }
         }

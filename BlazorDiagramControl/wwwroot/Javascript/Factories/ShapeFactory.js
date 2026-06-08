@@ -22,5 +22,7 @@ export function createShape(c) {
         c.top + type.height / 2,
         c.description,
         c.groupId,
-        c.csObject);
+        c.csObject,
+        c.color
+    );
 }

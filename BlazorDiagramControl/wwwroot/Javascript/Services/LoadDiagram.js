@@ -1,5 +1,5 @@
 import { parseXML } from "./Parser.js"
-import { diagramBuilder } from "./BuildDiagram.js"
+import { diagramBuilder } from "./Builder.js"
 import { renderDiagram } from "../Rendering/RenderDiagram.js";
 
 export async function loadDiagram(file) {

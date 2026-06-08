@@ -1,10 +1,9 @@
-﻿using BlazorDiagramControl.Components.Behavior;
-using BlazorDiagramControl.Components.Classes;
+﻿using BlazorDiagramControl.Components.Classes;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.JSInterop;
 using System.Reflection.Metadata.Ecma335;
 
-namespace BlazorDiagramControl.Components.Controller
+namespace BlazorDiagramControl.Components.Behavior
 {
     public class MaxBehavior : DiagramBehavior
     {
@@ -18,7 +17,7 @@ namespace BlazorDiagramControl.Components.Controller
         {
             var beginTemplate = new DiagramTemplate()
             {
-                Apply = (item) => { Items.Add(new MyBegin() { Name = "Begin", Description = "begin" ,ID = CreateID()}); },
+                Apply = (item) => { Items.Add(new MaxDataBegin() { Name = "Begin", Description = "begin" ,ID = CreateID()}); },
                 CanApply = (source) => CanRandomAdd(),
                 Description = "Begin"
             };
@@ -26,21 +25,21 @@ namespace BlazorDiagramControl.Components.Controller
 
             var procesTemplate = new DiagramTemplate()
             {
-                Apply = (item) => { Items.Add(new MyProcces() { Name = "Proces", Description = "Proces", ID = CreateID() }); },
+                Apply = (item) => { Items.Add(new MaxDataProcess() { Name = "Proces", Description = "Proces", ID = CreateID() }); },
                 CanApply = (source) => CanRandomAdd(),
-                Description = "procces"
+                Description = "Proces"
             };
             Templates.Add(procesTemplate);
             var choiceTemplate = new DiagramTemplate()
             {
-                Apply = (item) => { Items.Add(new MyChoice() { Name = "Choice", Description = "Choice", ID = CreateID() }); },
+                Apply = (item) => { Items.Add(new MaxDataChoice() { Name = "Choice", Description = "Choice", ID = CreateID() }); },
                 CanApply = (source) => CanRandomAdd(),
                 Description = "Choice"
             };
             Templates.Add(choiceTemplate);
             var EndTemplate = new DiagramTemplate()
             {
-                Apply = (item) => { Items.Add(new MyEnd() { Name = "End", Description = "End", ID = CreateID() }); },
+                Apply = (item) => { Items.Add(new MaxDataEnd() { Name = "End", Description = "End", ID = CreateID() }); },
                 CanApply = (source) => CanRandomAdd(),
                 Description = "End"
             };
@@ -58,41 +57,41 @@ namespace BlazorDiagramControl.Components.Controller
 
         internal override ItemDefinition ItemDefinitionForItem(object item)
         {
-            if (!(item is TestModels testModel))
+            if (!(item is MaxDataModels maxDataModels))
             {
                 return null;
             }
-            if (item is MyBegin)
+            if (item is MaxDataBegin)
             {
                 return new ItemDefinition(DiagramItemType.Begin)
                 {
-                    Content = testModel.Name,
-                    Description = testModel.Description,
+                    Content = maxDataModels.Name,
+                    Description = maxDataModels.Description,
                 };
 
             }
-            else if (item is MyProcces)
+            else if (item is MaxDataProcess)
             {
                 return new ItemDefinition(DiagramItemType.Process)
                 {
-                    Content = testModel.Name,
-                    Description = testModel.Description,
+                    Content = maxDataModels.Name,
+                    Description = maxDataModels.Description,
                 };
             }
-            else if (item is MyChoice)
+            else if (item is MaxDataChoice)
             {
                 return new ItemDefinition(DiagramItemType.Decision)
                 {
-                    Content = testModel.Name,
-                    Description = testModel.Description,
+                    Content = maxDataModels.Name,
+                    Description = maxDataModels.Description,
                 };
             }
-            else if (item is MyEnd)
+            else if (item is MaxDataEnd)
             {
                 return new ItemDefinition(DiagramItemType.End)
                 {
-                    Content = testModel.Name,
-                    Description = testModel.Description,
+                    Content = maxDataModels.Name,
+                    Description = maxDataModels.Description,
                 };
             }
             else
@@ -100,7 +99,10 @@ namespace BlazorDiagramControl.Components.Controller
                 return null;
             }
         }
-
+        public override string IdForObject(object targetObject)
+        {
+            return ((MaxDataModels)targetObject).ID;
+        }
 
         public bool CanRandomAdd()
         {

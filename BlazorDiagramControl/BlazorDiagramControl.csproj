@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Compile Remove="Components\Controller\ToolController.cs" />
-    <Compile Remove="Components\DiagramBehaviour\DiagramBehaviour.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,14 +16,17 @@
     <None Include="wwwroot\Javascript\Factories\ShapeFactory.js" />
     <None Include="wwwroot\Javascript\Models\Line.js" />
     <None Include="wwwroot\Javascript\Parser\Parser.js" />
-    <None Include="wwwroot\Javascript\Services\BuildDiagram.js" />
+    <None Include="wwwroot\Javascript\Services\Builder.js" />
     <None Include="wwwroot\Javascript\Services\LoadDiagram.js" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Components\Controller\" />
-    <Folder Include="Components\DiagramBehaviour\" />
     <Folder Include="wwwroot\Javascript\Parser\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
 </Project>

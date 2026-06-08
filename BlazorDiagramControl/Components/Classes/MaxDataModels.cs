@@ -1,6 +1,6 @@
 ﻿namespace BlazorDiagramControl.Components.Classes
 {
-    public class TestModels
+    public class MaxDataModels
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -8,19 +8,19 @@
         
     }
 
-    public class MyBegin : TestModels
+    public class MaxDataBegin : MaxDataModels
     {
     }
 
-    public class MyEnd : TestModels
+    public class MaxDataEnd : MaxDataModels
     {
     }
 
-    public class MyProcces : TestModels
+    public class MaxDataProcess : MaxDataModels
     {
     }
 
-    public class MyChoice : TestModels
+    public class MaxDataChoice : MaxDataModels
     {
     }
 }
