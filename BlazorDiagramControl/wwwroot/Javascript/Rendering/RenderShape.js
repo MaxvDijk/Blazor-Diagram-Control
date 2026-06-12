@@ -13,11 +13,7 @@
     renderers[shape.type.tag](el, shape);
 
     // ---- text ----
-    text.textContent = shape.description ?? "";
-    
-    //verwijderen voor truncating
-    text.setAttribute("textLength", shape.type.width - 12);
-    text.setAttribute("lengthAdjust", "spacingAndGlyphs");
+    text.textContent = truncateText(shape.description, 14);
     
     text.setAttribute("font-size", "12");
     text.setAttribute("fill", "black");
@@ -42,6 +38,15 @@
     updateShape(shape);
 
 }
+function truncateText(text, maxLength) {
+    if (!text) return "";
+
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + "...";
+    }
+
+    return text;
+}
 
 
 export function updateShape(shape) {
@@ -55,7 +60,7 @@ export function updateShape(shape) {
     );
 
     if (shape.textEl) {
-        shape.textEl.textContent = shape.description ?? "";
+        shape.textEl.textContent = truncateText(shape.description, 14);
     }
 }
 const renderers = {

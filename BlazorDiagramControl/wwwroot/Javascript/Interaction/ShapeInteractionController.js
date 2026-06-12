@@ -85,6 +85,11 @@ export function shapeInteractionController(svg, viewport, DotNet) {
         const clickedShape = diagram.shapes.get(el.dataset.shapeId);
         if (!clickedShape) return;
 
+        //DotNet.invokeMethodAsync(
+        //    "SetSelectedItem",
+        //    clickedShape.csObject,
+        //); 
+
         
         if (firstSelectedShape === null) {
             firstSelectedShape = clickedShape;

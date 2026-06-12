@@ -75,6 +75,8 @@
     private List<DiagramItem> Diagrams = new();
     public List<DiagramTemplate> ItemTemplates = new List<DiagramTemplate>();
 
+    public string selectedShape;
+
 
     private double x, y;
 
@@ -185,9 +187,20 @@
     }
     private async Task DeleteObject()
     {
-
+        List<string> shapes = new List<string>();
+        if(selectedShape != null)
+        {
+            shapes.Add(selectedShape);
+            await RemoveItem(shapes);
+            shapes.Clear();
+            selectedShape = null;
+        }
     }
-
+    [JSInvokable]
+    public async Task SetSelectedItem(string csObjectID)
+    {
+        selectedShape = csObjectID;
+    }
     [JSInvokable]
     public async Task AddLine(string sourceID, string targetID)
     {
