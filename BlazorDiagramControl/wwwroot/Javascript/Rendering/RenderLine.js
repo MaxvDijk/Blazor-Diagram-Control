@@ -68,7 +68,7 @@ export function updateLine(line, diagram) {
 }
 
 export function removeRenderLineElement(line) {
-    if (line.el) {
+    if (line?.g) {
         line.g.remove();
     }
 }

@@ -94,7 +94,7 @@ const renderers = {
 };
 
 export function removeRenderShapeElement(shape) {
-    if (shape.g) {
+    if (shape?.g) {
         shape.g.remove();
     }
 }

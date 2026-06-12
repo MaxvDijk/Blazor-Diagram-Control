@@ -23,4 +23,8 @@
     public class MaxDataChoice : MaxDataModels
     {
     }
+
+    public class MaxDataLine: MaxDataModels
+    {
+    }
 }

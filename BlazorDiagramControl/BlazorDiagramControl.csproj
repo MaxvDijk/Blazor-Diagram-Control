@@ -8,21 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Components\Controller\ToolController.cs" />
+    <Compile Remove="wwwroot\Javascript\Parser\**" />
+    <Content Remove="wwwroot\Javascript\Parser\**" />
+    <EmbeddedResource Remove="wwwroot\Javascript\Parser\**" />
+    <None Remove="wwwroot\Javascript\Parser\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\Javascript\Factories\LineFactory.js" />
     <None Include="wwwroot\Javascript\Factories\ShapeFactory.js" />
     <None Include="wwwroot\Javascript\Models\Line.js" />
-    <None Include="wwwroot\Javascript\Parser\Parser.js" />
     <None Include="wwwroot\Javascript\Services\Builder.js" />
     <None Include="wwwroot\Javascript\Services\LoadDiagram.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Controller\" />
-    <Folder Include="wwwroot\Javascript\Parser\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,28 @@
+﻿
+@using System.Reflection
+
+<h3>DetailScreenComponent</h3>
+
+@* @foreach ()
+{
+
+
+    <div class="mb-2">
+        <label>@ID.Name</label>
+        <input type="text" class="form-control" placeholder="ID" aria-label="ID" aria-describedby="basic-addon1">
+    </div>
+}
+ *@
+@code {
+    private object _dto;
+    [Parameter]
+    public object DTO { get;
+        set
+        {
+            _dto = value;
+
+            //Spul is veranderd. Update alles!
+        } 
+    }
+
+}

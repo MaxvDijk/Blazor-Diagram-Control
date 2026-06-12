@@ -10,15 +10,15 @@ namespace BlazorDiagramControl.Components.Behavior
         protected Random random = new();
         protected Guid guid;
         private int IDCount = 0;
-        string prefix = "CS";
+        readonly string prefix = "CS";
 
 
         public override void InitializeTemplates()
         {
             var beginTemplate = new DiagramTemplate()
             {
-                Apply = (item) => { Items.Add(new MaxDataBegin() { Name = "Begin", Description = "begin" ,ID = CreateID()}); },
-                CanApply = (source) => CanRandomAdd(),
+                Apply = (item) => { Items.Add(new MaxDataBegin() { Name = "Begin", Description = "begin", ID = CreateID() }); },
+                CanApply = (source) => CanAddItem(),
                 Description = "Begin"
             };
             Templates.Add(beginTemplate);
@@ -26,21 +26,21 @@ namespace BlazorDiagramControl.Components.Behavior
             var procesTemplate = new DiagramTemplate()
             {
                 Apply = (item) => { Items.Add(new MaxDataProcess() { Name = "Proces", Description = "Proces", ID = CreateID() }); },
-                CanApply = (source) => CanRandomAdd(),
+                CanApply = (source) => CanAddItem(),
                 Description = "Proces"
             };
             Templates.Add(procesTemplate);
             var choiceTemplate = new DiagramTemplate()
             {
                 Apply = (item) => { Items.Add(new MaxDataChoice() { Name = "Choice", Description = "Choice", ID = CreateID() }); },
-                CanApply = (source) => CanRandomAdd(),
+                CanApply = (source) => CanAddItem(),
                 Description = "Choice"
             };
             Templates.Add(choiceTemplate);
             var EndTemplate = new DiagramTemplate()
             {
                 Apply = (item) => { Items.Add(new MaxDataEnd() { Name = "End", Description = "End", ID = CreateID() }); },
-                CanApply = (source) => CanRandomAdd(),
+                CanApply = (source) => CanAddItem(),
                 Description = "End"
             };
             Templates.Add(EndTemplate);
@@ -99,22 +99,78 @@ namespace BlazorDiagramControl.Components.Behavior
                 return null;
             }
         }
-        public override string IdForObject(object targetObject)
+        public override string IdForItemObject(object targetObject)
         {
             return ((MaxDataModels)targetObject).ID;
         }
+        public override string IdForConnectionObject(object targetObject)
+        {
 
-        public bool CanRandomAdd()
+            return ((MaxDataModels)targetObject).ID;
+        }
+        public override MaxDataModels? ItemObjectForId(string ID)
+        {
+            foreach (MaxDataModels item in Items)
+            {
+                if (item.ID == ID) return item;
+            }
+            return null;
+        }
+
+        public override object AnyObjectForId(string ID)
+        {
+            foreach (MaxDataModels item in Items)
+            {
+                if (item.ID == ID) return item;
+            }
+            foreach (DiagramConnection connection in Connections)
+            {
+                var castedResult = connection.Context as MaxDataModels;
+                if (((MaxDataModels)connection.Context).ID == ID) return connection;
+            }
+            return null;
+        }
+
+
+        public override DiagramConnection? ConnectionObjectForId(string ID)
+        {
+            foreach (DiagramConnection connection in Connections)
+            {
+                var castedResult = connection.Context as MaxDataModels;
+                if (((MaxDataModels)connection.Context).ID == ID) return connection;
+            }
+            return null;
+        }
+
+        public override bool CanAddItem()
         {
             return true;
-        //    return Convert.ToBoolean(random.Next(2));
-
         }
 
-        public override bool CanRemoveItem()
+        public override bool CanDeleteItems(List<object> itemsToRemove)
         {
-            return Convert.ToBoolean(random.Next(2));
+            return true;
         }
+        public override void DeleteItems(List<object> itemsToRemove)
+        {
+
+        }
+
+        internal override ConnectionDefinition ConnectionDefinitionForConnection(DiagramConnection connection)
+        {
+            return new ConnectionDefinition(connection.Source, connection.Target, BindingType.Binding);
+        }
+
+        public override bool CanConnect(object source, object targetObject)
+        {
+            return true;
+        }
+
+        public override void Connect(object source, object targetObject)
+        {
+            Connections.Add(new DiagramConnection(source, targetObject, new MaxDataLine() { Name = "Line", Description = "Line", ID = CreateID() } ));
+        }
+
 
     }
 }

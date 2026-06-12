@@ -52,6 +52,23 @@
         return this.linesByShapeId;
     }
 
+    getShapeFromCSobject(csID) {
+        for(let shape of this.shapes.values()){
+            if (shape.csObject == csID) {
+                return shape;
+            }
+        }
+    }
+
+    getLineFromCSobject(csObject) {
+        for(let line of this.lines.values()){
+            if (line.csObject == csID) {
+                return line;
+            }
+        }
+    }
+
+
     removeShape(id) {
         
         for (const [lineId, line] of this.lines) {

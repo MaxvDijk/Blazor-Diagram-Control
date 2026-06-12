@@ -4,7 +4,7 @@ import { renderShape } from "../Rendering/RenderShape.js";
 import { renderLine } from "../Rendering/RenderLine.js";
 import { diagram } from "./Helpers.js";
 import { createViewportController } from "../Interaction/ViewportController.js";
-import { createShapeDragController } from "../Interaction/ShapeDragController.js";
+import { shapeInteractionController } from "../Interaction/ShapeInteractionController.js";
 
 let viewport = null;
 let svg = document.getElementById("diagram-svg");
@@ -14,7 +14,7 @@ let layers = {
     shapes: svg.querySelector("#shapes-layer")
 };
 
-export async function initDiagram(file) {
+export async function initDiagram(file, DotNet) {
 
     if (!layers) {
         layers = {
@@ -42,7 +42,7 @@ export async function initDiagram(file) {
 
     if (!viewport) { 
         viewport = createViewportController(svg);
-        createShapeDragController(svg, viewport);
+        shapeInteractionController(svg, viewport, DotNet);
     }
 
     renderDiagram(svg, viewport, layers);
@@ -67,7 +67,7 @@ export function initShape(shape) {
     }
     if (!viewport) {
         viewport = createViewportController(svg);
-        createShapeDragController(svg, viewport);
+        shapeInteractionController(svg, viewport, DotNet);
     }
 
     diagram.addShape(shape);
@@ -77,7 +77,7 @@ export function initShape(shape) {
 
 
 }
-export function initLine(shape) {
+export function initLine(line) {
 
     if (!layers) {
         layers = {
@@ -88,15 +88,15 @@ export function initLine(shape) {
     if (!svg) {
         svg = document.getElementById("diagram-svg");
     }
-    if (!shape) {
+    if (!line) {
         return;
     }
     if (!viewport) {
         viewport = createViewportController(svg);
-        createShapeDragController(svg, viewport);
+        shapeInteractionController(svg, viewport, DotNet);
     }
 
-    diagram.addLine(shape);
+    diagram.addLine(line);
 
-    renderShape(Line, layers.Lines);
+    renderLine(line, layers.lines);
 }

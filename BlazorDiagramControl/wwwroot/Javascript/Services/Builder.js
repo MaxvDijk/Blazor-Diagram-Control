@@ -1,7 +1,7 @@
 ﻿import { createShape } from "../Factories/ShapeFactory.js"
 import { createLine } from "../Factories/LineFactory.js"
 import { diagram, getSvgPoint } from "./Helpers.js"
-import { initShape } from "../Services/initializer.js"
+import { initShape, initLine } from "../Services/initializer.js"
 
 let svg = document.getElementById("diagram-svg");
 //Misschien andere naam want vind het zelf onduidelijk
@@ -38,7 +38,7 @@ export function shapeBuilder(itemDef, x, y, id) {
     if (points.y < 0) {
         points.y = 100
     }
-    console.log(points)
+
     let testObject = JSON.parse(itemDef)
     let c = {
         id: crypto.randomUUID(),
@@ -52,6 +52,7 @@ export function shapeBuilder(itemDef, x, y, id) {
         csObject: id,
         color: testObject.Color,
     }
+
     let newShape = createShape(c);
     initShape(newShape)
 }
@@ -81,4 +82,26 @@ function GetShapeType(type) {
         case 10:
             return "ConncetionPoint";
     }
+}
+export function lineBuilder(itemDef, id) {
+    if (!svg) {
+        svg = document.getElementById("diagram-svg");
+    }
+    let testObject = JSON.parse(itemDef)
+
+    let sourceShape = diagram.getShapeFromCSobject(testObject.Source.ID)
+    let targetShape = diagram.getShapeFromCSobject(testObject.Target.ID)
+    
+    let c = {
+        id: crypto.randomUUID(),
+        type: testObject.BindingType,
+        diagramType: "Connection",
+        startId: sourceShape.id,
+        endId: targetShape.id,
+        description: "test",
+        csObject: id
+    }
+
+    let newLine = createLine(c);
+    initLine(newLine)
 }

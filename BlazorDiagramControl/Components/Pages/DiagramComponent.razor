@@ -29,14 +29,11 @@
             </button>
         </div>
         <div class="d-flex gap-2">
-            @foreach (string tool in Tools)
-            {
-                <button class="btn btn-primary gap-2" @onclick="@(() => SetTool(tool))">
-                    @tool
+                <button class="btn btn-primary gap-2" @onclick="@(() => DeleteObject())">
+                    Remove
                 </button>
-            }
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 ms-5">
             @foreach (DiagramTemplate itemTemplate in ItemTemplates)
             {
 
@@ -61,23 +58,23 @@
     </div>
 </div>
 
-
+<DetailScreenComponent DTO="DTO" />
 @code {
     [Parameter]
     public DiagramBehavior diagramBehavior { get; set; }
 
+    private object DTO;
     private string? _activeTool;
 
-    private object DraggedItem;
-
+    private DotNetObjectReference<DiagramComponent>? dotNetHelper;
 
     private IJSObjectReference? initDiagramModule;
     private IJSObjectReference? saveDiagramModule;
     private IJSObjectReference generateModule;
 
     private List<DiagramItem> Diagrams = new();
-    public string[] Tools = { "none", "line", "remove" };
     public List<DiagramTemplate> ItemTemplates = new List<DiagramTemplate>();
+
 
     private double x, y;
 
@@ -90,9 +87,10 @@
 
     private async Task DragEnd(DragEventArgs e, string type)
     {
-
         x = e.ClientX;
         y = e.ClientY;
+
+        DTO = new object();
         await SetTemplate(type);
     }
 
@@ -122,11 +120,25 @@
         diagramBehavior.Items.CollectionChanged += ItemsChanged;
         diagramBehavior.Connections.CollectionChanged += ConnectionsChanged;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetHelper = DotNetObjectReference.Create(this);
+        }
+    }
+
+
     public async void ItemsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
+        if (e.NewItems == null)
+        {
+            return;
+        }
         foreach (object model in e.NewItems)
         {
-            var id = diagramBehavior.IdForObject(model);
+            var id = diagramBehavior.IdForItemObject(model);
             var itemDef = diagramBehavior.ItemDefinitionForItem(model);
             generateModule = await JS.InvokeAsync<IJSObjectReference>(
                 "import", "/Javascript/Services/Builder.js");
@@ -137,19 +149,18 @@
         }
     }
 
-    private void ConnectionsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private async void ConnectionsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-        
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+        foreach (DiagramConnection model in e.NewItems)
         {
+            var id = diagramBehavior.IdForConnectionObject(model.Context);
+            var connectionDef = diagramBehavior.ConnectionDefinitionForConnection(model);
+            generateModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "/Javascript/Services/Builder.js");
 
-            // IJSObjectReference interactionModule = await JS.InvokeAsync<IJSObjectReference>(
-            //     "import", "/Javascript/Interaction/InteractionHandler.js");
+            var JsonString = JsonConvert.SerializeObject(connectionDef);
+            await generateModule.InvokeVoidAsync("lineBuilder", JsonString, id);
 
-            // await interactionModule.InvokeVoidAsync("initInteraction");
         }
     }
 
@@ -162,19 +173,9 @@
 
         }
 
-        await initDiagramModule.InvokeVoidAsync("initDiagram", file);
+        await initDiagramModule.InvokeVoidAsync("initDiagram", file, dotNetHelper);
     }
 
-    private async Task SetTool(string tool)
-    {
-
-        _activeTool = tool;
-
-        var toolbarModule = await JS.InvokeAsync<IJSObjectReference>(
-            "import", "/Javascript/Interaction/ToolBarButtonController.js");
-
-        await toolbarModule.InvokeVoidAsync("setActiveTool", tool);
-    }
     private async Task SaveDiagram()
     {
         saveDiagramModule = await JS.InvokeAsync<IJSObjectReference>(
@@ -182,8 +183,50 @@
 
         await saveDiagramModule.InvokeVoidAsync("saveDiagram");
     }
-    // public void Dispose()
-    // {
-    //     objRef?.Dispose();
-    // }
+    private async Task DeleteObject()
+    {
+
+    }
+
+    [JSInvokable]
+    public async Task AddLine(string sourceID, string targetID)
+    {
+        object source = diagramBehavior.ItemObjectForId(sourceID);
+        object target = diagramBehavior.ItemObjectForId(targetID);
+        bool canAddLine = diagramBehavior.CanConnect(source, target);
+        if (canAddLine)
+        {
+            diagramBehavior.Connect(source, target);
+        }
+
+    }
+    [JSInvokable]
+    public async Task RemoveItem(List<string> csObjects)
+    {
+        List<object> tempList = new List<object>();
+        foreach (string csObject in csObjects)
+        {
+            tempList.Add(diagramBehavior.AnyObjectForId(csObject));
+        }
+
+        bool canRemove = diagramBehavior.CanDeleteItems(tempList);
+        if (canRemove)
+        {
+            diagramBehavior.DeleteItems(tempList);
+
+            var removeItemModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "/Javascript/Services/Remover.js");
+
+            await removeItemModule.InvokeVoidAsync("removeObject", csObjects);
+
+            
+        }
+        tempList.Clear();
+    }
+
+
+    public void Dispose()
+    {
+        dotNetHelper?.Dispose();
+    }
 }
