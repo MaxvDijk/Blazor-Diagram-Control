@@ -1,7 +1,8 @@
 ﻿using BlazorDiagramControl.Components.Classes;
+using BlazorDiagramControl.Components.Model;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.JSInterop;
-using System.Reflection.Metadata.Ecma335;
+using System.Reflection;
 
 namespace BlazorDiagramControl.Components.Behavior
 {
@@ -153,8 +154,26 @@ namespace BlazorDiagramControl.Components.Behavior
         }
         public override void DeleteItems(List<object> itemsToRemove)
         {
+            foreach(var itemToRemove in itemsToRemove)
+            {
+                var test = itemToRemove.GetType();
 
-        }
+                if (test == connecttion)
+                    connection.remove(itemToRemove);
+                else
+                {
+                    foreach (var connection in Connections)
+                    {
+                        if (connection.Context is MaxDataModels model)
+                        {
+
+                        }
+                    }
+                    Items.Remove(itemToRemove)
+                }
+                Console.WriteLine(test);
+            }
+        } 
 
         internal override ConnectionDefinition ConnectionDefinitionForConnection(DiagramConnection connection)
         {

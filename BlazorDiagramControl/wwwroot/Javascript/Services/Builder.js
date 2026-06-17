@@ -32,18 +32,11 @@ export function shapeBuilder(itemDef, x, y, id) {
     }
 
     let points = getSvgPoint(svg, x, y);
-    if (points.x < 0) {
-        points.x = 100
-    }
-    if (points.y < 0) {
-        points.y = 100
-    }
 
     let testObject = JSON.parse(itemDef)
     let c = {
         id: crypto.randomUUID(),
         type: GetShapeType(testObject.ItemType),
-        diagramType: "Solid",
         left: null,
         top: null,
         x: points.x,
@@ -95,7 +88,6 @@ export function lineBuilder(itemDef, id) {
     let c = {
         id: crypto.randomUUID(),
         type: testObject.BindingType,
-        diagramType: "Connection",
         startId: sourceShape.id,
         endId: targetShape.id,
         description: "test",

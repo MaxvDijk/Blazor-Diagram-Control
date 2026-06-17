@@ -2,6 +2,7 @@
 import { removeRenderLineElement } from "../Rendering/RenderLine.js"
 import { removeRenderShapeElement } from "../Rendering/RenderShape.js"
 export function removeObject(csObject) {
+
     for (var csId of csObject) {
         let shape = diagram.getShapeFromCSobject(csId)
         if (shape) {

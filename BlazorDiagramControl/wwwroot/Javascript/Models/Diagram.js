@@ -1,10 +1,18 @@
 ﻿export class Diagram {
-
     constructor() {
         this.shapes = new Map();
         this.lines = new Map();
         this.linesByShapeId = new Map();
+        let selectedShape;
     }
+
+    getSelectedShape() {
+        return selectedShape;
+    }
+    setSelectedShape(selectedshape) {
+        this.selectedShape = selectedshape;
+    }
+    
 
     addShape(shape) {
         this.shapes.set(shape.id, shape);
@@ -60,7 +68,7 @@
         }
     }
 
-    getLineFromCSobject(csObject) {
+    getLineFromCSobject(csID) {
         for(let line of this.lines.values()){
             if (line.csObject == csID) {
                 return line;

@@ -1,13 +1,15 @@
 import { updateShape } from "../Rendering/RenderShape.js";
 import { updateLine } from "../Rendering/RenderLine.js";
-import { diagram } from "../Services/Helpers.js";
+import { diagram, getSvgPoint  } from "../Services/Helpers.js";
 import { getActiveTool } from "./ToolBarButtonController.js";
 
 export function shapeInteractionController(svg, viewport, DotNet) {
 
-    let dragging = false;
-    let shape = null;
-    let firstSelectedShape = null;
+    let hoverShape;
+    let dragMode;
+    let sourceShape = null;
+    let shape;
+    let previewLine;
     const selectedShapes = new Set();
 
     let pending = new Set();
@@ -17,8 +19,6 @@ export function shapeInteractionController(svg, viewport, DotNet) {
     let lastY = 0;
 
     function startDrag(s, e) {
-
-        dragging = false;
         shape = s;
 
         document.body.style.userSelect = "none";
@@ -33,12 +33,6 @@ export function shapeInteractionController(svg, viewport, DotNet) {
 
         const dx = e.clientX - lastX;
         const dy = e.clientY - lastY;
-
-        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
-            dragging = true;
-        }
-
-        if (!dragging) return;
 
         const scale = viewport.getScale();
 
@@ -71,88 +65,173 @@ export function shapeInteractionController(svg, viewport, DotNet) {
     function stopDrag() {
         if (!shape) return;
 
-        dragging = false;
+        shape = null
 
-        shape = null;
-
-        document.body.style.userSelect = "none";
+        document.body.style.userSelect = "";
     }
-
-    function handleShapeClick(e) {
-        let el = document.elementFromPoint(e.clientX, e.clientY)
-        el = el?.closest("[data-shape-id]");
-        if (!el) return;
-        const clickedShape = diagram.shapes.get(el.dataset.shapeId);
-        if (!clickedShape) return;
-
-        //DotNet.invokeMethodAsync(
-        //    "SetSelectedItem",
-        //    clickedShape.csObject,
-        //); 
-
-        
-        if (firstSelectedShape === null) {
-            firstSelectedShape = clickedShape;
-
-            firstSelectedShape.el.setAttribute("stroke", "blue");
-            firstSelectedShape.el.setAttribute("stroke-width", "2");
-        } else {
-            if (firstSelectedShape !== clickedShape) {
-                
-                DotNet.invokeMethodAsync(
-                    "AddLine",
-                    firstSelectedShape.csObject,
-                    clickedShape.csObject
-                );
-                firstSelectedShape.el.setAttribute("stroke-width", "1");
-                firstSelectedShape.el.setAttribute("stroke", "black");
-            }
-            firstSelectedShape.el.setAttribute("stroke-width", "1");
-            firstSelectedShape.el.setAttribute("stroke", "black");
-            firstSelectedShape = null;
+    function handlePointerMove(e) {
+        if (dragMode === "move") {
+            moveDrag(e);
         }
-        console.log(firstSelectedShape)
+        else if (dragMode === "connect") {
+            updateLinePreview(e);
+        }
     }
 
+    function startLinePreview(e) {
+        previewLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+
+        previewLine.setAttribute("stroke", "black");
+        const linesLayer = svg.querySelector("#lines-layer");
+
+        linesLayer.appendChild(previewLine);
+
+    }
+
+    function updateLinePreview(e) {
+
+        if (!previewLine || !sourceShape) return;
+
+        const svgPoint = getSvgPoint(svg, e.clientX, e.clientY);
+
+        previewLine.setAttribute("x1", sourceShape.x);
+        previewLine.setAttribute("y1", sourceShape.y);
+        previewLine.setAttribute("x2", svgPoint.x);
+        previewLine.setAttribute("y2", svgPoint.y);
+
+        const element = document.elementFromPoint(e.clientX, e.clientY);
+        const el = element?.closest("[data-shape-id]");
+
+        let newHoverShape = null;
+
+        if (el) {
+            newHoverShape = diagram.shapes.get(el.dataset.shapeId);
+        }
+
+        if (hoverShape !== newHoverShape) {
+
+            if (hoverShape && hoverShape !== diagram.selectedShape) {
+                hoverShape.el.setAttribute("stroke", "black");
+                hoverShape.el.setAttribute("stroke-width", "1");
+            }
+
+            hoverShape = newHoverShape;
+
+            if (hoverShape && hoverShape !== sourceShape) {
+                hoverShape.el.setAttribute("stroke", "blue");
+                hoverShape.el.setAttribute("stroke-width", "2");
+            }
+        }
+    }
+
+    function stopLinePreview() {
+        if (previewLine) {
+            hoverShape.el.setAttribute("stroke", "black");
+            hoverShape.el.setAttribute("stroke-width", "1");
+
+            setSelectedShape(hoverShape);
+            previewLine.remove();
+            previewLine = null;
+        }
+    }
     function handlePointerDown(e) {
         const el = e.target.closest("[data-shape-id]");
-        if (!el) return;
-        
-        const s = diagram.shapes.get(el.dataset.shapeId);
-        if (!s) return;
 
-        if (e.button == 0) {
-
-            startDrag(s, e);
-            svg.setPointerCapture(e.pointerId);
+        if (!el) {
+            setSelectedShape(null);
+            return;
         }
+        console.log(el);
+        
+        const shape = diagram.shapes.get(el.dataset.shapeId);
+        const line = diagram.lines.get(el.dataset.shapeId);
+        if (!shape) {
+            setSelectedShape(line)
+        }
+        if (!line) {
+            setSelectedShape(shape);
+        }
+
+        if (e.button === 0) {
+            dragMode = "move";
+            startDrag(shape, e);
+        }
+        else if (e.button === 2) {
+            dragMode = "connect";
+            sourceShape = shape;
+            startLinePreview(e);
+        }
+        svg.setPointerCapture(e.pointerId)
     }
     function handlePointerUp(e) {
-        const wasDragging = dragging;
 
-        stopDrag();
-
-        if (!wasDragging) {
-            handleShapeClick(e);
+        if (dragMode === "move") {
+            stopDrag();
         }
+        else if (dragMode === "connect") {
+
+
+            const element = document.elementFromPoint(e.clientX, e.clientY);
+            const el = element?.closest("[data-shape-id]");
+
+            if (!el) {
+                stopLinePreview();
+                return;
+            }
+
+            if (el) {
+                const targetShape = diagram.shapes.get(el.dataset.shapeId);
+
+                if (targetShape && targetShape !== sourceShape) {
+                    DotNet.invokeMethodAsync(
+                        "AddLine",
+                        sourceShape.csObject,
+                        targetShape.csObject
+                    );
+                    
+                }
+            }
+
+            stopLinePreview();
+        }
+        dragMode = null;
+        sourceShape = null;
+
     }
 
     function handleKeyDown(e) {
-        if (!firstSelectedShape || firstSelectedShape === null) return;
-        
+        if (!diagram.selectedShape) return;
+
         if (e.key === "Delete" || e.key === "Backspace") {
-            selectedShapes.add(firstSelectedShape.csObject)
+            selectedShapes.add(diagram.selectedShape.csObject)
             DotNet.invokeMethodAsync(
                 "RemoveItem",
                 Array.from(selectedShapes),
             );
             selectedShapes.clear();
-            firstSelectedShape = null;
+            setSelectedShape(null);
         }
     }
 
-    window.addEventListener("keydown", handleKeyDown)
-    svg.addEventListener("pointermove", moveDrag);
+    svg.addEventListener("pointerdown", handlePointerDown);
+    svg.addEventListener("pointermove", handlePointerMove);
     svg.addEventListener("pointerup", handlePointerUp);
     svg.addEventListener("pointercancel", stopDrag);
+
+    svg.addEventListener("contextmenu", e => e.preventDefault());
+    window.addEventListener("keydown", handleKeyDown);
+}
+function setSelectedShape(newShape) {
+    if (diagram.selectedShape && diagram.selectedShape.el) {
+        diagram.selectedShape.el.setAttribute("stroke", "black");
+        diagram.selectedShape.el.setAttribute("stroke-width", "1");
+    }
+
+    diagram.selectedShape = newShape;
+
+    if (newShape && newShape.el) {
+        newShape.el.setAttribute("stroke", "blue");
+        newShape.el.setAttribute("stroke-width", "2");
+    }
+
 }

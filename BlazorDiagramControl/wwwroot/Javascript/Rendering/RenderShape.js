@@ -12,8 +12,10 @@
 
     renderers[shape.type.tag](el, shape);
 
+    let characterMaxLength;
+
     // ---- text ----
-    text.textContent = truncateText(shape.description, 14);
+    text.textContent = truncateTextByWidth(shape.description, shape);
     
     text.setAttribute("font-size", "12");
     text.setAttribute("fill", "black");
@@ -38,19 +40,21 @@
     updateShape(shape);
 
 }
-function truncateText(text, maxLength) {
+function truncateTextByWidth(text, shape) {
+    const approxCharWidth = 6;
+    const maxChars = Math.floor(shape.type.width / approxCharWidth);
+
     if (!text) return "";
 
-    if (text.length > maxLength) {
-        return text.substring(0, maxLength) + "...";
-    }
-
-    return text;
+    return text.length > maxChars
+        ? text.substring(0, maxChars - 3) + "..."
+        : text;
 }
 
 
 export function updateShape(shape) {
 
+    let characterMaxLength;
     const g = shape.g;
     if (!g) return;
 
@@ -60,7 +64,7 @@ export function updateShape(shape) {
     );
 
     if (shape.textEl) {
-        shape.textEl.textContent = truncateText(shape.description, 14);
+        shape.textEl.textContent = truncateTextByWidth(shape.description, shape);
     }
 }
 const renderers = {
