@@ -158,18 +158,35 @@ namespace BlazorDiagramControl.Components.Behavior
             {
                 var test = itemToRemove.GetType();
 
-                if (test == connecttion)
-                    connection.remove(itemToRemove);
-                else
+                if (itemToRemove is DiagramConnection diagramConnection)
                 {
+                    Connections.Remove(diagramConnection);
+                }
+                else if(itemToRemove is MaxDataModels maxDataModelToRemove)
+                {
+                    List<DiagramConnection> connectionsToRemove = new List<DiagramConnection>();
+
                     foreach (var connection in Connections)
                     {
-                        if (connection.Context is MaxDataModels model)
+                        if (connection.Source is MaxDataModels sourceMaxDataModel)
                         {
-
+                            if(maxDataModelToRemove.ID == sourceMaxDataModel.ID) {
+                                connectionsToRemove.Add(connection);
+                            }
+                        }
+                        if(connection.Target is MaxDataModels targetMaxDataModel)
+                        {
+                            if (maxDataModelToRemove.ID == targetMaxDataModel.ID) {
+                                connectionsToRemove.Add(connection);
+                            }
                         }
                     }
-                    Items.Remove(itemToRemove)
+                    foreach (var connection in connectionsToRemove)
+                    {
+                        Connections.Remove(connection);
+                    }
+
+                    Items.Remove(maxDataModelToRemove);
                 }
                 Console.WriteLine(test);
             }

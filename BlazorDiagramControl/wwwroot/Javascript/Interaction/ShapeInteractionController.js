@@ -126,12 +126,13 @@ export function shapeInteractionController(svg, viewport, DotNet) {
 
     function stopLinePreview() {
         if (previewLine) {
-            hoverShape.el.setAttribute("stroke", "black");
-            hoverShape.el.setAttribute("stroke-width", "1");
-
-            setSelectedShape(hoverShape);
+            if (hoverShape && hoverShape.el) {
+                hoverShape.el.setAttribute("stroke", "black");
+                hoverShape.el.setAttribute("stroke-width", "1");
+            }
             previewLine.remove();
             previewLine = null;
+            setSelectedShape(hoverShape);
         }
     }
     function handlePointerDown(e) {
@@ -212,6 +213,31 @@ export function shapeInteractionController(svg, viewport, DotNet) {
             setSelectedShape(null);
         }
     }
+    function setSelectedShape(newShape) {
+        if (diagram.selectedShape && diagram.selectedShape.el) {
+            diagram.selectedShape.el.setAttribute("stroke", "black");
+            diagram.selectedShape.el.setAttribute("stroke-width", "1");
+        }
+
+        diagram.selectedShape = newShape;
+
+        if (newShape && newShape.el) {
+            newShape.el.setAttribute("stroke", "blue");
+            newShape.el.setAttribute("stroke-width", "2");
+        }
+        if (!newShape) {
+            DotNet.invokeMethodAsync(
+                "SetSelectedItem",
+                "Clear"
+            );
+        }
+        else if (newShape) {
+                DotNet.invokeMethodAsync(
+                    "SetSelectedItem",
+                    newShape.csObject
+                );
+            }
+    }
 
     svg.addEventListener("pointerdown", handlePointerDown);
     svg.addEventListener("pointermove", handlePointerMove);
@@ -220,18 +246,4 @@ export function shapeInteractionController(svg, viewport, DotNet) {
 
     svg.addEventListener("contextmenu", e => e.preventDefault());
     window.addEventListener("keydown", handleKeyDown);
-}
-function setSelectedShape(newShape) {
-    if (diagram.selectedShape && diagram.selectedShape.el) {
-        diagram.selectedShape.el.setAttribute("stroke", "black");
-        diagram.selectedShape.el.setAttribute("stroke-width", "1");
-    }
-
-    diagram.selectedShape = newShape;
-
-    if (newShape && newShape.el) {
-        newShape.el.setAttribute("stroke", "blue");
-        newShape.el.setAttribute("stroke-width", "2");
-    }
-
 }

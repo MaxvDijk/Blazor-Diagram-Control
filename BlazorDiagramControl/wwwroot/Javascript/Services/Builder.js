@@ -30,7 +30,11 @@ export function shapeBuilder(itemDef, x, y, id) {
     if (!svg) {
         svg = document.getElementById("diagram-svg");
     }
-
+    if (!x || !y) {
+        const rect = svg.getBoundingClientRect();
+        x = rect.left + 100;
+        y = rect.top + 50;
+    }
     let points = getSvgPoint(svg, x, y);
 
     let testObject = JSON.parse(itemDef)

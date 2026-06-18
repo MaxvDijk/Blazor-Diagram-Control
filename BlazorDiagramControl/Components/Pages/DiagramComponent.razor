@@ -152,6 +152,11 @@
 
     private async void ConnectionsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
+        if(e.NewItems == null)
+        {
+            return;
+        }
+
         foreach (DiagramConnection model in e.NewItems)
         {
             var id = diagramBehavior.IdForConnectionObject(model.Context);
@@ -198,7 +203,15 @@
     [JSInvokable]
     public async Task SetSelectedItem(string csObjectID)
     {
-        selectedShape = csObjectID;
+        if (csObjectID == "clear")
+        {
+            selectedShape = null;
+        }
+        else
+        {
+            selectedShape = csObjectID;
+            
+        }
     }
     [JSInvokable]
     public async Task AddLine(string sourceID, string targetID)
